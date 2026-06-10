@@ -1,4 +1,4 @@
-.PHONY: help install dev test test-cov eval eval-longmem eval-cn lint format clean api mcp demo
+.PHONY: help install dev test test-cov eval eval-longmem eval-cn lint format clean api mcp demo web web-build web-install
 
 help:
 	@echo "MemoCortex Makefile"
@@ -7,6 +7,9 @@ help:
 	@echo "  dev          启动 FastAPI 服务(热重载)"
 	@echo "  api          启动 FastAPI 服务(生产模式)"
 	@echo "  mcp          启动 MCP Server"
+	@echo "  web          启动前端 Demo (Next.js) → http://localhost:3000"
+	@echo "  web-install  装前端 npm 依赖 (首次跑必须)"
+	@echo "  web-build    前端生产构建 (用于 Vercel 部署)"
 	@echo "  demo         运行基础 demo(30 行展示 5 类记忆)"
 	@echo "  demo-conflict 运行冲突仲裁 demo"
 	@echo "  demo-lc      运行 LangChain 适配 demo"
@@ -66,3 +69,13 @@ format:
 clean:
 	rm -rf data/chroma data/graph data/cold data/memocortex.db data/*.db-* logs/
 	@echo "运行时数据已清理"
+
+# ── Frontend (Next.js) ──────────────────────────────────────────────
+web-install:
+	cd web && npm install
+
+web:
+	cd web && npm run dev
+
+web-build:
+	cd web && npm run build
