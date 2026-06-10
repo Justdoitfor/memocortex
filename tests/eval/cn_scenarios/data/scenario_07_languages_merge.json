@@ -1,0 +1,14 @@
+{
+  "id": "07",
+  "name": "多语言能力新增 — 应 MERGE",
+  "description": "用户陆续提到会的语言, 应累加保留.",
+  "user_id": "eval_user_07",
+  "writes": [
+    {"content": "我会说中文和英语"},
+    {"content": "另外我还在学日语, 已经能日常对话"}
+  ],
+  "query": "用户会说哪些语言",
+  "expected_answer": "中文 英语 日语",
+  "must_contain_all": ["中文", "英语", "日语"],
+  "expected_action": "merge"
+}

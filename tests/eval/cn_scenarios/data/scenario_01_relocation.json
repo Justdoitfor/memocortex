@@ -1,0 +1,15 @@
+{
+  "id": "01",
+  "name": "用户搬家 — 应 REPLACE",
+  "description": "用户上半年说住北京, 下半年说住上海. 上海是当前正确事实.",
+  "user_id": "eval_user_01",
+  "writes": [
+    {"content": "我现在住在北京朝阳区"},
+    {"content": "今天去了三里屯逛街"},
+    {"content": "我搬家了, 现在住在上海浦东"}
+  ],
+  "query": "用户现在住在哪里",
+  "expected_answer": "上海",
+  "must_not_contain_in_top_3": ["北京"],
+  "expected_action": "replace"
+}

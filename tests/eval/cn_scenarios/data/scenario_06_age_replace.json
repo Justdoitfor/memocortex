@@ -1,0 +1,14 @@
+{
+  "id": "06",
+  "name": "矛盾事实 — 应 IGNORE 或 REPLACE 后者",
+  "description": "用户的年龄事实出现矛盾, 应保留最新陈述, 不应共存矛盾值.",
+  "user_id": "eval_user_06",
+  "writes": [
+    {"content": "我今年 28 岁"},
+    {"content": "其实我刚过完 30 岁生日"}
+  ],
+  "query": "用户的年龄",
+  "expected_answer": "30",
+  "must_not_contain_in_top_3": [],
+  "expected_action": "replace"
+}

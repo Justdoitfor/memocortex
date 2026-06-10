@@ -1,0 +1,14 @@
+{
+  "id": "04",
+  "name": "宠物多养 — 应 MERGE",
+  "description": "list 字段不应被新值覆盖, 应保留全部宠物.",
+  "user_id": "eval_user_04",
+  "writes": [
+    {"content": "我家有只叫小白的猫"},
+    {"content": "上周又领养了一只叫旺财的狗"}
+  ],
+  "query": "用户养了哪些宠物",
+  "expected_answer": "小白 旺财",
+  "must_contain_all": ["小白", "旺财"],
+  "expected_action": "merge"
+}

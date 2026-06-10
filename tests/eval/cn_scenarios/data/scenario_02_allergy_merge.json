@@ -1,0 +1,14 @@
+{
+  "id": "02",
+  "name": "过敏原合并 — 应 MERGE",
+  "description": "用户先后提到两个过敏原, 应合并保留, 不能覆盖.",
+  "user_id": "eval_user_02",
+  "writes": [
+    {"content": "我对花生过敏"},
+    {"content": "其实我对芝麻也过敏"}
+  ],
+  "query": "用户的过敏原有哪些",
+  "expected_answer": "花生 芝麻",
+  "must_contain_all": ["花生", "芝麻"],
+  "expected_action": "merge"
+}

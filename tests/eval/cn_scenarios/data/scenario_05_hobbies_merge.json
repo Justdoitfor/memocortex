@@ -1,0 +1,15 @@
+{
+  "id": "05",
+  "name": "爱好新增 — 应 MERGE",
+  "description": "用户陆续提到多个爱好, 应全部保留.",
+  "user_id": "eval_user_05",
+  "writes": [
+    {"content": "我喜欢爬山"},
+    {"content": "我还喜欢摄影"},
+    {"content": "周末有时候打篮球"}
+  ],
+  "query": "用户有什么爱好",
+  "expected_answer": "爬山 摄影 篮球",
+  "must_contain_all": ["爬山", "摄影", "篮球"],
+  "expected_action": "merge"
+}

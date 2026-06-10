@@ -1,0 +1,41 @@
+name: eval
+
+# 每次 PR 跑中文场景 eval, 准确率退化 > 5% 则 block
+on:
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    if: ${{ secrets.MEMOCORTEX_LLM_API_KEY != '' }}   # 没 LLM Key 时跳过
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Restore last_eval_score for regression diff
+        uses: actions/cache@v4
+        with:
+          path: tests/eval/.last_eval_score
+          key: memocortex-eval-${{ github.base_ref }}
+
+      - name: Run CN scenarios eval
+        env:
+          MEMOCORTEX_LLM_API_KEY: ${{ secrets.MEMOCORTEX_LLM_API_KEY }}
+          MEMOCORTEX_LLM_API_BASE: ${{ secrets.MEMOCORTEX_LLM_API_BASE }}
+          MEMOCORTEX_LLM_MODEL: ${{ secrets.MEMOCORTEX_LLM_MODEL }}
+        run: |
+          uv run python -m tests.eval.runner --suite cn_scenarios
+
+      - name: Upload eval report
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: tests/eval/.last_eval_score

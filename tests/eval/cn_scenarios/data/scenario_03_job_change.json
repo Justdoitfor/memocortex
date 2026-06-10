@@ -1,0 +1,14 @@
+{
+  "id": "03",
+  "name": "职业变更 — 应 REPLACE",
+  "description": "用户换工作了, 旧的应被新的替代.",
+  "user_id": "eval_user_03",
+  "writes": [
+    {"content": "我在阿里巴巴做后端开发"},
+    {"content": "我跳槽了, 现在在字节跳动做 AI 工程师"}
+  ],
+  "query": "用户目前的工作是什么",
+  "expected_answer": "字节跳动 AI 工程师",
+  "must_not_contain_in_top_3": ["阿里巴巴"],
+  "expected_action": "replace"
+}

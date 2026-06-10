@@ -1,0 +1,97 @@
+"""4 信号召回打分实现 — 每个函数独立可测."""
+
+from __future__ import annotations
+
+import math
+from datetime import datetime
+
+from app.config import config
+from app.models import MemoryRecord
+
+
+def compute_vector_sim(raw_similarity: float) -> float:
+    """ChromaDB cosine similarity 已经在 [0, 1], 直接返回."""
+    return max(0.0, min(1.0, raw_similarity))
+
+
+def compute_temporal_decay(
+    created_at: datetime,
+    now: datetime | None = None,
+    tau_days: float | None = None,
+) -> float:
+    """指数时间衰减: f(t) = exp(-Δt / τ), 越新越接近 1.
+
+    tau_days 控制衰减速度: 默认 30 天 → 一个月前的记忆衰减到 e^{-1} ≈ 0.37.
+    """
+    now = now or datetime.now()
+    tau = tau_days if tau_days is not None else config.temporal_tau_days
+    delta_days = max(0.0, (now - created_at).total_seconds() / 86400.0)
+    if tau <= 0:
+        return 1.0
+    return math.exp(-delta_days / tau)
+
+
+def compute_graph_proximity(
+    record: MemoryRecord,
+    query_entities: set[str],
+    user_neighbors: set[str],
+) -> float:
+    """记忆与查询的实体重叠度.
+
+    简化规则:
+      - 查询中的实体在记忆的 structured.subject/object 出现 → +0.5
+      - 记忆的实体在 user 的 KG 邻居中 → +0.3
+      - 全无 → 0
+    """
+    score = 0.0
+    record_entities: set[str] = set()
+    if record.structured:
+        for k in ("subject", "object"):
+            v = record.structured.get(k)
+            if v:
+                record_entities.add(str(v))
+
+    if record_entities & query_entities:
+        score += 0.5
+    if record_entities & user_neighbors:
+        score += 0.3
+    return min(1.0, score)
+
+
+def compute_importance(record: MemoryRecord) -> float:
+    """直接读 record.importance, 兼容 recall_count 加成."""
+    base = record.importance
+    # 召回越多次, 重要度微涨 (饱和函数, 上限不超过 1)
+    bonus = math.tanh(record.recall_count / 20.0) * 0.1
+    return min(1.0, base + bonus)
+
+
+def fuse_signals(
+    vector_sim: float,
+    temporal_decay: float,
+    graph_proximity: float,
+    importance: float,
+    weights: tuple[float, float, float, float] | None = None,
+) -> float:
+    """加权融合 4 信号. 默认权重从 config 读, 可被业务覆盖.
+
+    所有权重为 0 时直接返回 0 (语义: 无任何信号被采用 → 不应给分).
+    """
+    if weights is None:
+        w = (
+            config.recall_w_vector,
+            config.recall_w_temporal,
+            config.recall_w_graph,
+            config.recall_w_importance,
+        )
+    else:
+        w = weights
+    total_w = sum(w)
+    if total_w <= 0:
+        return 0.0
+    return (
+        w[0] * vector_sim
+        + w[1] * temporal_decay
+        + w[2] * graph_proximity
+        + w[3] * importance
+    ) / total_w
