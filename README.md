@@ -11,19 +11,22 @@
 
 ## 解决什么问题
 
-2026 年 Agent 落地最大的瓶颈不再是模型能力,而是**长期记忆**:
+2026 年 Agent 落地最大的瓶颈不再是模型能力,而是**长期记忆**。MemoCortex 与现有方案的差异:
 
-| 现状方案 | 问题 |
+| 现状方案 | 局限 |
 |----------|------|
 | LangChain `ConversationSummaryMemory` | 摘要损失大,跨 session 几乎全丢 |
-| 纯向量召回 (mem0 v1.x) | "语义相似"≠"实际相关", 旧记忆与新记忆冲突时直接 append 出现矛盾事实 |
-| Zep / Letta | 强在某一面 (时序 / 单 Agent OS) 但**绑死框架**, 不能服务多套上游 |
+| mem0 v2.0.x (2026-04) — 已支持 Hybrid Retrieval + entity linking | 仍是 2 类扁平记忆;走 ADD-only + 召回 rerank 路线,对"用户搬家、换工作"这类**确定性事实变更不主动收敛**(旧事实留库靠 rank 压下去);无 MCP 协议接入 |
+| Zep | 强在时序检索,弱在多框架接入与冲突主动消解 |
+| Letta (原 MemGPT) | 单 Agent OS 风格,**不是中间件** |
 
 **MemoCortex 把"记忆"当成一个分布式基础设施来做**, 而不是某个 Agent 的内部模块:
-- **5 类分层记忆** (借鉴 Tulving 1985 认知科学分类), 信息按性质分流, 比 mem0 多 3 类
-- **4 信号 Hybrid Recall** (向量 + 时间衰减 + 图扩展 + 重要度), 召回准确率较纯向量 +21pp
-- **LLM-as-Arbitrator 自动冲突消解** (REPLACE/MERGE/VERSIONED/IGNORE 4 种 action + 完整审计日志)
-- **多框架 Adapter** (LangChain 已实现 + MCP Server + AutoGen/CrewAI stub) — 一次开发覆盖全 Agent 生态
+- **5 类分层记忆** (借鉴 Tulving 1985 认知科学分类), 信息按性质分流, 比 mem0 v2 的 2 类 + entity 多 3 个语义维度
+- **4 信号 Hybrid Recall** (向量 + **时间衰减** + 图扩展 + **重要度评分**), 比 mem0 v2 的 3 信号(语义 + BM25 + entity)多了"时间衰减"和"重要度"两个 mem0 没有的维度
+- **LLM-as-Arbitrator 自动冲突消解** (REPLACE/MERGE/VERSIONED/IGNORE 4 种 action + 完整审计日志) — **与 mem0 v2 的 ADD-only 路线分歧**,选择"写入时主动消解、可回滚可审计"
+- **MCP Server** (5 个工具) — mem0/Zep/Letta 都没做
+- **Reflective Memory 用户画像** — 后台 Worker 周期刷新,作为"人物简介"注入 SystemPrompt
+- **多框架 Adapter** (LangChain 已实现 + AutoGen/CrewAI stub) — 一次开发覆盖全 Agent 生态
 
 ---
 
@@ -131,8 +134,8 @@ final_score = w1·vector_sim + w2·temporal_decay + w3·graph_proximity + w4·im
 ```
 
 举例:用户先说 "我对花生过敏",后说 "其实芝麻也过敏"。
-- mem0 v1.x: REPLACE → 只剩"芝麻过敏" ❌
-- **MemoCortex**: 识别 `allergic_to` 是 `list` 字段 → MERGE → 保留两个过敏原 ✅
+- mem0 v2 (2026-04+): ADD-only + 哈希去重,两条事实并存,靠召回 rank 处理 — 体验上"花生"还会被召回,得让上层 Agent 自己挑
+- **MemoCortex**: 识别 `allergic_to` 是 `list` 字段 → LLM 主动 MERGE → KG 中只保留一条合并后的多值事实,带审计日志可回滚 ✅
 
 ---
 
@@ -179,15 +182,24 @@ make eval           # 全套
 
 ---
 
-## 与 mem0 / Zep / Letta 的区别
+## 与 mem0 / Zep / Letta 的区别 (已对齐 mem0 v2.0.4, 2026-05 最新版)
 
-| 维度 | mem0 v1.1 | Zep | Letta (MemGPT) | **MemoCortex** |
-|------|----------|-----|----------------|---------------|
-| 记忆分层 | 2 类 | 时序为主 | 单 Agent OS 风格 | **5 类 (Working/Episodic/Semantic/Procedural/Reflective)** |
-| 召回信号 | 向量 | 向量+时序 | 上下文窗口管理 | **4 信号融合** |
-| 冲突消解 | append (粗暴) | 部分支持 | 不强 | **LLM Arbitrator + 4 action + 审计** |
-| 多框架支持 | LangChain/OpenAI | 自有 SDK | 自有 SDK | **LangChain + MCP + AutoGen/CrewAI Stub** |
-| 定位 | Agent 内部模块 | 时序记忆库 | Agent OS | **基础设施中间件** |
+| 维度 | **mem0 v2.0.4** (2026-05) | Zep | Letta (MemGPT) | **MemoCortex** |
+|------|--------------------------|-----|----------------|---------------|
+| 记忆分层 | 2 类 (user / agent memory) + entity collection | 时序为主 | 单 Agent OS 风格 | **5 类 (Working/Episodic/Semantic/Procedural/Reflective)** |
+| 召回信号 | **3 信号融合** (语义 + BM25 + entity boost,v2 新增) | 向量 + 时序 | 上下文窗口管理 | **4 信号** (向量 + **时间衰减** + 图扩展 + **重要度**) |
+| 冲突消解 | **ADD-only + 哈希去重 + 召回 rank** (v2 新路线) | 部分支持 | 不强 | **LLM Arbitrator + 4 action + 完整审计可回滚** |
+| 知识图谱 | **内置 entity linking** (v2 移除 Neo4j) | 无 | 无 | NetworkX KG (MVP) / Neo4j (生产) + entity 双索引 |
+| MCP Server | ❌ | ❌ | ❌ | ✅ **5 个工具** |
+| Reflective Profile | ❌ | ❌ | ❌ | ✅ 后台 Worker 周期刷新 |
+| 多框架支持 | Python SDK + Platform API | 自有 SDK | 自有 SDK | **REST + SDK + MCP + LangChain Adapter** |
+| 定位 | Agent 内部模块 | 时序记忆库 | Agent OS | **Agent-agnostic 基础设施中间件** |
+
+> mem0 v2 (2026-04 发布) 做了架构级重写, 在 Hybrid Retrieval 和 entity linking 上追上了一代差距,但路线选择完全不同:
+> - **mem0 v2 选择**: 写入侧极简 (ADD-only), 召回侧重 rank, 强调低延迟
+> - **MemoCortex 选择**: 写入侧主动消解 (LLM Arbitrator + 审计), 召回侧 4 信号融合, 强调可解释与可回滚
+>
+> 两条路线在不同业务场景各有取舍。MemoCortex 更适合需要"用户画像稳定、事实变更可追溯"的企业场景。
 
 ---
 
