@@ -48,6 +48,9 @@ _REFLECT_PROMPT = ChatPromptTemplate.from_messages(
                 "- constraints 列出明确的禁忌 (过敏/讨厌)\n"
                 "- interaction_style 根据用户表达习惯推断 (不必硬给, 不确定就留空)\n"
                 "- 严禁编造未在事实列表中出现的信息\n"
+                "\n"
+                "返回 JSON: {{\"one_liner\": \"...\", \"facts\": {{\"key\": \"val\"}}, "
+                "\"preferences\": [...], \"constraints\": [...], \"interaction_style\": \"...\"}}"
             ),
         ),
         ("human", "用户事实:\n{facts_text}"),
@@ -87,14 +90,12 @@ class ReflectiveMemory:
         )
 
         try:
-            llm = llm_factory.create_chat_model(temperature=0.2, streaming=False)
-            chain = _REFLECT_PROMPT | llm.with_structured_output(
-                _Profile, method="function_calling"
-            )
             with metrics.timer("reflective.refresh.latency"):
-                result = await chain.ainvoke({"facts_text": facts_text})
-            if isinstance(result, dict):
-                result = _Profile(**result)
+                result = await llm_factory.structured_invoke(
+                    _REFLECT_PROMPT, _Profile, {"facts_text": facts_text}, temperature=0.2
+                )
+            if result is None:
+                raise RuntimeError("structured_invoke 返回 None")
             profile = result.model_dump()
         except Exception as e:
             logger.warning(f"Reflective refresh LLM 失败, 降级: {e}")

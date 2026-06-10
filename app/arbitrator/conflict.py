@@ -53,6 +53,10 @@ _ARBITRATE_PROMPT = ChatPromptTemplate.from_messages(
                 "  其他不确定 → IGNORE\n"
                 "\n"
                 "必须给出 reasoning (一句话, 说明为什么) 和 confidence (0-1).\n"
+                "\n"
+                "返回 JSON, 字段: action (replace/merge/versioned/ignore 小写), "
+                "reasoning (一句话), confidence (0-1), merged_value (action=merge 时填, 否则 null).\n"
+                '示例: {{"action": "merge", "reasoning": "list 字段, 应保留所有过敏原", "confidence": 0.95, "merged_value": "花生,芝麻"}}'
             ),
         ),
         (
@@ -106,14 +110,12 @@ class ConflictArbitrator:
             for t in existing_triples
         )
 
-        decision: ArbitrationDecision
+        decision: ArbitrationDecision | None = None
         try:
-            llm = llm_factory.create_chat_model(temperature=0, streaming=False)
-            chain = _ARBITRATE_PROMPT | llm.with_structured_output(
-                ArbitrationDecision, method="function_calling"
-            )
             with metrics.timer("arbitrator.latency"):
-                result = await chain.ainvoke(
+                decision = await llm_factory.structured_invoke(
+                    _ARBITRATE_PROMPT,
+                    ArbitrationDecision,
                     {
                         "user_id": user_id,
                         "field_semantics": field_semantics,
@@ -122,14 +124,13 @@ class ConflictArbitrator:
                         "predicate": new_triple.predicate,
                         "new_object": new_triple.object,
                         "confidence": f"{new_triple.confidence:.2f}",
-                    }
+                    },
+                    temperature=0,
                 )
-            if isinstance(result, dict):
-                decision = ArbitrationDecision(**result)
-            else:
-                decision = result
         except Exception as e:
-            logger.warning(f"Arbitrator LLM 失败, 降级用启发式: {e}")
+            logger.warning(f"Arbitrator LLM 失败: {e}")
+        if decision is None:
+            logger.warning("Arbitrator 降级用启发式")
             decision = self._heuristic_fallback(new_triple, existing_triples, field_semantics)
 
         # 写审计日志

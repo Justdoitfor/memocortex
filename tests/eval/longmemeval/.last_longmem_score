@@ -1,0 +1,624 @@
+{
+  "suite": "longmemeval_cn30",
+  "total": 30,
+  "passed": 27,
+  "pass_rate": 0.9,
+  "by_subtype": {
+    "single_session": {
+      "passed": 9,
+      "total": 10
+    },
+    "multi_session": {
+      "passed": 9,
+      "total": 10
+    },
+    "temporal_reasoning": {
+      "passed": 5,
+      "total": 5
+    },
+    "knowledge_update": {
+      "passed": 4,
+      "total": 5
+    }
+  },
+  "results": [
+    {
+      "question_id": "cn_ss_01",
+      "subtype": "single_session",
+      "pass": true,
+      "latency_ms": 28553.1,
+      "top_3": [
+        "我最喜欢的咖啡店是 Blue Bottle, 上海安福路那家",
+        "user favorite_coffee_shop Blue Bottle (上海安福路)",
+        "公司楼下新开了一家咖啡店"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户最喜欢的咖啡店是哪家",
+      "expected_answer": "Blue Bottle"
+    },
+    {
+      "question_id": "cn_ss_02",
+      "subtype": "single_session",
+      "pass": false,
+      "latency_ms": 17259.3,
+      "top_3": [
+        "user has_plant 迷迭香",
+        "user owns_headphones 耳机",
+        "明天有个产品评审会"
+      ],
+      "checks": {
+        "contain": {
+          "pass": false,
+          "missing": [
+            "薄荷"
+          ]
+        }
+      },
+      "question": "用户家阳台种了什么植物",
+      "expected_answer": "薄荷 迷迭香"
+    },
+    {
+      "question_id": "cn_ss_03",
+      "subtype": "single_session",
+      "pass": true,
+      "latency_ms": 10336.0,
+      "top_3": [
+        "我的初代 iPhone 是高三那年买的 4S",
+        "刚收到快递, 是上周买的耳机",
+        "电脑突然蓝屏了, 重启好了"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户的第一部 iPhone 是哪个型号",
+      "expected_answer": "iPhone 4S"
+    },
+    {
+      "question_id": "cn_ss_04",
+      "subtype": "single_session",
+      "pass": true,
+      "latency_ms": 6327.6,
+      "top_3": [
+        "我大学时主修计算机, 辅修了心理学",
+        "user major 计算机",
+        "user minor 心理学"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户大学辅修什么专业",
+      "expected_answer": "心理学"
+    },
+    {
+      "question_id": "cn_ss_05",
+      "subtype": "single_session",
+      "pass": true,
+      "latency_ms": 17489.1,
+      "top_3": [
+        "我家狗叫旺财, 是只 5 岁的柯基",
+        "公司楼下新开了一家咖啡店",
+        "晚上跑步遇到了好多人"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户养的是什么品种的狗",
+      "expected_answer": "柯基"
+    },
+    {
+      "question_id": "cn_ss_06",
+      "subtype": "single_session",
+      "pass": true,
+      "latency_ms": 4176.3,
+      "top_3": [
+        "我去年生日是在京都过的, 还看到了樱花",
+        "明天有个产品评审会",
+        "公司楼下新开了一家咖啡店"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户上个生日在哪里过的",
+      "expected_answer": "京都"
+    },
+    {
+      "question_id": "cn_ss_07",
+      "subtype": "single_session",
+      "pass": true,
+      "latency_ms": 14169.0,
+      "top_3": [
+        "user has_lens 35mm定焦镜头",
+        "user uses_camera 富士 X-T5",
+        "我现在用的相机是富士 X-T5, 配 35mm 定焦镜头"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户当前用的相机是哪款",
+      "expected_answer": "富士 X-T5"
+    },
+    {
+      "question_id": "cn_ss_08",
+      "subtype": "single_session",
+      "pass": true,
+      "latency_ms": 4594.9,
+      "top_3": [
+        "user allergic_to 青霉素",
+        "我对青霉素过敏, 每次去医院都要特别告知",
+        "听说下周要降温"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户对什么药物过敏",
+      "expected_answer": "青霉素"
+    },
+    {
+      "question_id": "cn_ss_09",
+      "subtype": "single_session",
+      "pass": true,
+      "latency_ms": 16916.3,
+      "top_3": [
+        "user works_in 杭州滨江区",
+        "user works_at AI创业公司",
+        "user occupation 算法工程师"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户在哪个城市工作",
+      "expected_answer": "杭州"
+    },
+    {
+      "question_id": "cn_ss_10",
+      "subtype": "single_session",
+      "pass": true,
+      "latency_ms": 18575.8,
+      "top_3": [
+        "user wife_occupation 产品经理",
+        "user wife_works_at 阿里",
+        "user married_to 林晓"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户配偶的职业是什么",
+      "expected_answer": "产品经理"
+    },
+    {
+      "question_id": "cn_ms_01",
+      "subtype": "multi_session",
+      "pass": false,
+      "latency_ms": 12954.6,
+      "top_3": [
+        "user travels_to 日本",
+        "user booked_flight_to 日本",
+        "user has_flight_on 5月12日下午"
+      ],
+      "checks": {
+        "contain": {
+          "pass": false,
+          "missing": [
+            "5 月 12"
+          ]
+        }
+      },
+      "question": "用户什么时候出发去日本",
+      "expected_answer": "5 月 12 号"
+    },
+    {
+      "question_id": "cn_ms_02",
+      "subtype": "multi_session",
+      "pass": true,
+      "latency_ms": 9400.6,
+      "top_3": [
+        "user hobby 吉他",
+        "user practices 民谣指弹",
+        "我最近在学吉他"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户在学什么乐器",
+      "expected_answer": "吉他"
+    },
+    {
+      "question_id": "cn_ms_03",
+      "subtype": "multi_session",
+      "pass": true,
+      "latency_ms": 14281.5,
+      "top_3": [
+        "user target_weight_kg 65",
+        "user gym_routine 每周三次",
+        "目标是从 75 公斤降到 65 公斤"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户的目标体重是多少",
+      "expected_answer": "65 公斤"
+    },
+    {
+      "question_id": "cn_ms_04",
+      "subtype": "multi_session",
+      "pass": true,
+      "latency_ms": 9741.8,
+      "top_3": [
+        "user target_school 清华大学",
+        "user target_major 计算机系",
+        "我打算考研"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户考研的目标学校是哪所",
+      "expected_answer": "清华"
+    },
+    {
+      "question_id": "cn_ms_05",
+      "subtype": "multi_session",
+      "pass": true,
+      "latency_ms": 18468.7,
+      "top_3": [
+        "user lives_in 海淀区的一居室",
+        "租了海淀区的一个一居室",
+        "user near 地铁4号线"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户租的房子在哪个区",
+      "expected_answer": "海淀"
+    },
+    {
+      "question_id": "cn_ms_06",
+      "subtype": "multi_session",
+      "pass": true,
+      "latency_ms": 29217.3,
+      "top_3": [
+        "我家有两个孩子",
+        "user has_child 小雯",
+        "user has_child_count 2"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户两个孩子的名字分别是什么",
+      "expected_answer": "小宇 小雯"
+    },
+    {
+      "question_id": "cn_ms_07",
+      "subtype": "multi_session",
+      "pass": true,
+      "latency_ms": 11668.5,
+      "top_3": [
+        "user wedding_dress_designer Vera Wang",
+        "user wedding_location 三亚的海边",
+        "婚礼定在三亚的海边"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户的婚礼在哪里举办",
+      "expected_answer": "三亚"
+    },
+    {
+      "question_id": "cn_ms_08",
+      "subtype": "multi_session",
+      "pass": true,
+      "latency_ms": 7636.8,
+      "top_3": [
+        "显卡用的是 4090",
+        "user uses_gpu RTX 4090",
+        "user uses_cpu AMD 7950X"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户打算配什么型号的显卡",
+      "expected_answer": "4090"
+    },
+    {
+      "question_id": "cn_ms_09",
+      "subtype": "multi_session",
+      "pass": true,
+      "latency_ms": 13916.0,
+      "top_3": [
+        "user occupation AI教育方向产品",
+        "user team_composition 技术背景",
+        "做的是 AI 教育方向的产品"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户创业的方向是什么",
+      "expected_answer": "AI 教育"
+    },
+    {
+      "question_id": "cn_ms_10",
+      "subtype": "multi_session",
+      "pass": true,
+      "latency_ms": 11379.2,
+      "top_3": [
+        "user owns_house 上海的一套房产",
+        "user monthly_payment 1.7 万",
+        "user loan_amount 300 万"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户房子的总价是多少",
+      "expected_answer": "800 万"
+    },
+    {
+      "question_id": "cn_tr_01",
+      "subtype": "temporal_reasoning",
+      "pass": true,
+      "latency_ms": 9334.5,
+      "top_3": [
+        "user hobby 打羽毛球",
+        "我每周三晚上 7 点会去打羽毛球",
+        "通常打 2 小时"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户每周固定哪天打羽毛球",
+      "expected_answer": "周三"
+    },
+    {
+      "question_id": "cn_tr_02",
+      "subtype": "temporal_reasoning",
+      "pass": true,
+      "latency_ms": 4841.8,
+      "top_3": [
+        "我每年 11 月体检",
+        "明天有个产品评审会",
+        "今年特别加了肠胃镜"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户什么月份体检",
+      "expected_answer": "11 月"
+    },
+    {
+      "question_id": "cn_tr_03",
+      "subtype": "temporal_reasoning",
+      "pass": true,
+      "latency_ms": 4801.9,
+      "top_3": [
+        "我上次出国是 2024 年 3 月去的泰国",
+        "下次准备明年春天去欧洲",
+        "刚收到快递, 是上周买的耳机"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户上次出国去了哪里",
+      "expected_answer": "泰国"
+    },
+    {
+      "question_id": "cn_tr_04",
+      "subtype": "temporal_reasoning",
+      "pass": true,
+      "latency_ms": 25483.3,
+      "top_3": [
+        "已经坚持 3 年了",
+        "user hobby 跑步",
+        "user wake_up_time 6 点"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户坚持晨跑多少年了",
+      "expected_answer": "3 年"
+    },
+    {
+      "question_id": "cn_tr_05",
+      "subtype": "temporal_reasoning",
+      "pass": true,
+      "latency_ms": 4792.3,
+      "top_3": [
+        "我今年春节是在老家武汉过的",
+        "公司楼下新开了一家咖啡店",
+        "听说下周要降温"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        }
+      },
+      "question": "用户春节去了哪个城市",
+      "expected_answer": "武汉"
+    },
+    {
+      "question_id": "cn_ku_01",
+      "subtype": "knowledge_update",
+      "pass": true,
+      "latency_ms": 28923.6,
+      "top_3": [
+        "user works_at 字节",
+        "user occupation 基础架构",
+        "user owns_headphones 耳机"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        },
+        "not_contain": {
+          "pass": true,
+          "violated": []
+        }
+      },
+      "question": "用户目前在哪家公司",
+      "expected_answer": "字节"
+    },
+    {
+      "question_id": "cn_ku_02",
+      "subtype": "knowledge_update",
+      "pass": true,
+      "latency_ms": 11034.0,
+      "top_3": [
+        "user girlfriend 莉莉",
+        "我们分手了, 现在的女朋友叫莉莉",
+        "公司楼下新开了一家咖啡店"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        },
+        "not_contain": {
+          "pass": true,
+          "violated": []
+        }
+      },
+      "question": "用户现在的女朋友叫什么",
+      "expected_answer": "莉莉"
+    },
+    {
+      "question_id": "cn_ku_03",
+      "subtype": "knowledge_update",
+      "pass": true,
+      "latency_ms": 7785.0,
+      "top_3": [
+        "user owns_car 特斯拉 Model Y",
+        "上个月换了车, 现在开特斯拉 Model Y",
+        "公司楼下新开了一家咖啡店"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        },
+        "not_contain": {
+          "pass": true,
+          "violated": []
+        }
+      },
+      "question": "用户现在开什么车",
+      "expected_answer": "特斯拉 Model Y"
+    },
+    {
+      "question_id": "cn_ku_04",
+      "subtype": "knowledge_update",
+      "pass": false,
+      "latency_ms": 13608.7,
+      "top_3": [
+        "user weight_kg 80",
+        "我体重 80 公斤",
+        "明天有个产品评审会"
+      ],
+      "checks": {
+        "contain": {
+          "pass": false,
+          "missing": [
+            "70"
+          ]
+        },
+        "not_contain": {
+          "pass": false,
+          "violated": [
+            "80 公斤"
+          ]
+        }
+      },
+      "question": "用户当前体重是多少",
+      "expected_answer": "70 公斤"
+    },
+    {
+      "question_id": "cn_ku_05",
+      "subtype": "knowledge_update",
+      "pass": true,
+      "latency_ms": 11376.5,
+      "top_3": [
+        "user owns_phone iPhone 16 Pro",
+        "我换手机了, 用的是 iPhone 16 Pro",
+        "新闻里说股市又跌了"
+      ],
+      "checks": {
+        "contain": {
+          "pass": true,
+          "missing": []
+        },
+        "not_contain": {
+          "pass": true,
+          "violated": []
+        }
+      },
+      "question": "用户当前用什么手机",
+      "expected_answer": "iPhone 16 Pro"
+    }
+  ]
+}

@@ -1,0 +1,2362 @@
+[
+  {
+    "question_id": "cn_ss_01",
+    "subtype": "single_session",
+    "user_id": "lme_user_ss_01",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "周末打算去看个电影"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "最近在追一部古装剧"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我最喜欢的咖啡店是 Blue Bottle, 上海安福路那家"
+      },
+      {
+        "role": "ai",
+        "content": "好的, 记住了"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户最喜欢的咖啡店是哪家",
+    "expected_answer": "Blue Bottle",
+    "must_contain": [
+      "Blue Bottle"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ss_02",
+    "subtype": "single_session",
+    "user_id": "lme_user_ss_02",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "周末打算去看个电影"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "最近在追一部古装剧"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚收到快递, 是上周买的耳机"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我家阳台上种了两盆薄荷和一盆迷迭香"
+      },
+      {
+        "role": "ai",
+        "content": "好的, 记住了"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户家阳台种了什么植物",
+    "expected_answer": "薄荷 迷迭香",
+    "must_contain": [
+      "薄荷"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ss_03",
+    "subtype": "single_session",
+    "user_id": "lme_user_ss_03",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "最近在追一部古装剧"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚收到快递, 是上周买的耳机"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我的初代 iPhone 是高三那年买的 4S"
+      },
+      {
+        "role": "ai",
+        "content": "好的, 记住了"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户的第一部 iPhone 是哪个型号",
+    "expected_answer": "iPhone 4S",
+    "must_contain": [
+      "4S"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ss_04",
+    "subtype": "single_session",
+    "user_id": "lme_user_ss_04",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "刚收到快递, 是上周买的耳机"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我大学时主修计算机, 辅修了心理学"
+      },
+      {
+        "role": "ai",
+        "content": "好的, 记住了"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户大学辅修什么专业",
+    "expected_answer": "心理学",
+    "must_contain": [
+      "心理学"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ss_05",
+    "subtype": "single_session",
+    "user_id": "lme_user_ss_05",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我家狗叫旺财, 是只 5 岁的柯基"
+      },
+      {
+        "role": "ai",
+        "content": "好的, 记住了"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "地铁上特别挤, 站了一路"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户养的是什么品种的狗",
+    "expected_answer": "柯基",
+    "must_contain": [
+      "柯基"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ss_06",
+    "subtype": "single_session",
+    "user_id": "lme_user_ss_06",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我去年生日是在京都过的, 还看到了樱花"
+      },
+      {
+        "role": "ai",
+        "content": "好的, 记住了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "地铁上特别挤, 站了一路"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "新闻里说股市又跌了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户上个生日在哪里过的",
+    "expected_answer": "京都",
+    "must_contain": [
+      "京都"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ss_07",
+    "subtype": "single_session",
+    "user_id": "lme_user_ss_07",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我现在用的相机是富士 X-T5, 配 35mm 定焦镜头"
+      },
+      {
+        "role": "ai",
+        "content": "好的, 记住了"
+      },
+      {
+        "role": "user",
+        "content": "地铁上特别挤, 站了一路"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "新闻里说股市又跌了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "猫今天不肯吃饭, 不知道怎么回事"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户当前用的相机是哪款",
+    "expected_answer": "富士 X-T5",
+    "must_contain": [
+      "X-T5"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ss_08",
+    "subtype": "single_session",
+    "user_id": "lme_user_ss_08",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我对青霉素过敏, 每次去医院都要特别告知"
+      },
+      {
+        "role": "ai",
+        "content": "好的, 记住了"
+      },
+      {
+        "role": "user",
+        "content": "新闻里说股市又跌了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "猫今天不肯吃饭, 不知道怎么回事"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "今天天气还不错, 风有点大"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户对什么药物过敏",
+    "expected_answer": "青霉素",
+    "must_contain": [
+      "青霉素"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ss_09",
+    "subtype": "single_session",
+    "user_id": "lme_user_ss_09",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我目前在杭州滨江区的一家 AI 创业公司做算法工程师"
+      },
+      {
+        "role": "ai",
+        "content": "好的, 记住了"
+      },
+      {
+        "role": "user",
+        "content": "猫今天不肯吃饭, 不知道怎么回事"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "今天天气还不错, 风有点大"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户在哪个城市工作",
+    "expected_answer": "杭州",
+    "must_contain": [
+      "杭州"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ss_10",
+    "subtype": "single_session",
+    "user_id": "lme_user_ss_10",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "地铁上特别挤, 站了一路"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我老婆叫林晓, 是个产品经理, 在阿里工作"
+      },
+      {
+        "role": "ai",
+        "content": "好的, 记住了"
+      },
+      {
+        "role": "user",
+        "content": "今天天气还不错, 风有点大"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "周末打算去看个电影"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户配偶的职业是什么",
+    "expected_answer": "产品经理",
+    "must_contain": [
+      "产品经理"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ms_01",
+    "subtype": "multi_session",
+    "user_id": "lme_user_ms_01",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "最近在追一部古装剧"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚收到快递, 是上周买的耳机"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我在准备去日本旅游, 已经买了机票"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "酒店订的是大阪心斋桥附近的"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我的航班是 5 月 12 号下午的"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "今天天气还不错, 风有点大"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户什么时候出发去日本",
+    "expected_answer": "5 月 12 号",
+    "must_contain": [
+      "5 月 12"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ms_02",
+    "subtype": "multi_session",
+    "user_id": "lme_user_ms_02",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我最近在学吉他"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "目前主要练的是民谣指弹"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "老师说我的右手节奏感不错"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户在学什么乐器",
+    "expected_answer": "吉他",
+    "must_contain": [
+      "吉他"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ms_03",
+    "subtype": "multi_session",
+    "user_id": "lme_user_ms_03",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我打算今年减肥"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "地铁上特别挤, 站了一路"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "目标是从 75 公斤降到 65 公斤"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "新闻里说股市又跌了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "猫今天不肯吃饭, 不知道怎么回事"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "已经开始每周三次健身房"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户的目标体重是多少",
+    "expected_answer": "65 公斤",
+    "must_contain": [
+      "65"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ms_04",
+    "subtype": "multi_session",
+    "user_id": "lme_user_ms_04",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "地铁上特别挤, 站了一路"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "新闻里说股市又跌了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我打算考研"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "猫今天不肯吃饭, 不知道怎么回事"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "今天天气还不错, 风有点大"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "目标是清华的计算机系"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "周末打算去看个电影"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "今年 12 月就考试了"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "今天天气还不错, 风有点大"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户考研的目标学校是哪所",
+    "expected_answer": "清华",
+    "must_contain": [
+      "清华"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ms_05",
+    "subtype": "multi_session",
+    "user_id": "lme_user_ms_05",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "今天天气还不错, 风有点大"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我最近搬到了北京"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "周末打算去看个电影"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "最近在追一部古装剧"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "租了海淀区的一个一居室"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "刚收到快递, 是上周买的耳机"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "离地铁 4 号线很近"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户租的房子在哪个区",
+    "expected_answer": "海淀",
+    "must_contain": [
+      "海淀"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ms_06",
+    "subtype": "multi_session",
+    "user_id": "lme_user_ms_06",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "最近在追一部古装剧"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚收到快递, 是上周买的耳机"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我家有两个孩子"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "大的叫小宇, 7 岁了上小学一年级"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "小的叫小雯, 才 3 岁"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户两个孩子的名字分别是什么",
+    "expected_answer": "小宇 小雯",
+    "must_contain": [
+      "小宇"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ms_07",
+    "subtype": "multi_session",
+    "user_id": "lme_user_ms_07",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我下个月要结婚了"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "婚礼定在三亚的海边"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "婚纱已经选好了, 是 Vera Wang 的"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "今天天气还不错, 风有点大"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户的婚礼在哪里举办",
+    "expected_answer": "三亚",
+    "must_contain": [
+      "三亚"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ms_08",
+    "subtype": "multi_session",
+    "user_id": "lme_user_ms_08",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我打算自己装一台台式机"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "地铁上特别挤, 站了一路"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "CPU 选的是 AMD 7950X"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "新闻里说股市又跌了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "猫今天不肯吃饭, 不知道怎么回事"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "显卡用的是 4090"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户打算配什么型号的显卡",
+    "expected_answer": "4090",
+    "must_contain": [
+      "4090"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ms_09",
+    "subtype": "multi_session",
+    "user_id": "lme_user_ms_09",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "地铁上特别挤, 站了一路"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "新闻里说股市又跌了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我最近在创业"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "猫今天不肯吃饭, 不知道怎么回事"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "今天天气还不错, 风有点大"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "做的是 AI 教育方向的产品"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "周末打算去看个电影"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "团队目前 5 个人, 都是技术"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户创业的方向是什么",
+    "expected_answer": "AI 教育",
+    "must_contain": [
+      "AI"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ms_10",
+    "subtype": "multi_session",
+    "user_id": "lme_user_ms_10",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "今天天气还不错, 风有点大"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我家在上海有套房"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "周末打算去看个电影"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "最近在追一部古装剧"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "已经付完首付了, 总价 800 万"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "刚收到快递, 是上周买的耳机"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "贷款 300 万, 月供 1.7 万"
+      },
+      {
+        "role": "ai",
+        "content": "了解"
+      },
+      {
+        "role": "user",
+        "content": "今天天气还不错, 风有点大"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户房子的总价是多少",
+    "expected_answer": "800 万",
+    "must_contain": [
+      "800"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_tr_01",
+    "subtype": "temporal_reasoning",
+    "user_id": "lme_user_tr_01",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "我中午吃了一碗牛肉面"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "周末打算去看个电影"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我每周三晚上 7 点会去打羽毛球"
+      },
+      {
+        "role": "ai",
+        "content": "嗯"
+      },
+      {
+        "role": "user",
+        "content": "通常打 2 小时"
+      },
+      {
+        "role": "ai",
+        "content": "嗯"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户每周固定哪天打羽毛球",
+    "expected_answer": "周三",
+    "must_contain": [
+      "周三"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_tr_02",
+    "subtype": "temporal_reasoning",
+    "user_id": "lme_user_tr_02",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "周末打算去看个电影"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "最近在追一部古装剧"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我每年 11 月体检"
+      },
+      {
+        "role": "ai",
+        "content": "嗯"
+      },
+      {
+        "role": "user",
+        "content": "今年特别加了肠胃镜"
+      },
+      {
+        "role": "ai",
+        "content": "嗯"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户什么月份体检",
+    "expected_answer": "11 月",
+    "must_contain": [
+      "11"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_tr_03",
+    "subtype": "temporal_reasoning",
+    "user_id": "lme_user_tr_03",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "最近在追一部古装剧"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚收到快递, 是上周买的耳机"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我上次出国是 2024 年 3 月去的泰国"
+      },
+      {
+        "role": "ai",
+        "content": "嗯"
+      },
+      {
+        "role": "user",
+        "content": "下次准备明年春天去欧洲"
+      },
+      {
+        "role": "ai",
+        "content": "嗯"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户上次出国去了哪里",
+    "expected_answer": "泰国",
+    "must_contain": [
+      "泰国"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_tr_04",
+    "subtype": "temporal_reasoning",
+    "user_id": "lme_user_tr_04",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "刚收到快递, 是上周买的耳机"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我每天早上 6 点起床跑 5 公里"
+      },
+      {
+        "role": "ai",
+        "content": "嗯"
+      },
+      {
+        "role": "user",
+        "content": "已经坚持 3 年了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户坚持晨跑多少年了",
+    "expected_answer": "3 年",
+    "must_contain": [
+      "3 年"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_tr_05",
+    "subtype": "temporal_reasoning",
+    "user_id": "lme_user_tr_05",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我今年春节是在老家武汉过的"
+      },
+      {
+        "role": "ai",
+        "content": "嗯"
+      },
+      {
+        "role": "user",
+        "content": "陪了爸妈一周"
+      },
+      {
+        "role": "ai",
+        "content": "嗯"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户春节去了哪个城市",
+    "expected_answer": "武汉",
+    "must_contain": [
+      "武汉"
+    ],
+    "must_not_contain": []
+  },
+  {
+    "question_id": "cn_ku_01",
+    "subtype": "knowledge_update",
+    "user_id": "lme_user_ku_01",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "我目前在腾讯做后端"
+      },
+      {
+        "role": "ai",
+        "content": "好的"
+      },
+      {
+        "role": "user",
+        "content": "刚收到快递, 是上周买的耳机"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我跳槽到了字节, 现在做基础架构"
+      },
+      {
+        "role": "ai",
+        "content": "明白了, 已经更新"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户目前在哪家公司",
+    "expected_answer": "字节",
+    "must_contain": [
+      "字节"
+    ],
+    "must_not_contain": [
+      "腾讯"
+    ]
+  },
+  {
+    "question_id": "cn_ku_02",
+    "subtype": "knowledge_update",
+    "user_id": "lme_user_ku_02",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "我女朋友叫小雪"
+      },
+      {
+        "role": "ai",
+        "content": "好的"
+      },
+      {
+        "role": "user",
+        "content": "电脑突然蓝屏了, 重启好了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我们分手了, 现在的女朋友叫莉莉"
+      },
+      {
+        "role": "ai",
+        "content": "明白了, 已经更新"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户现在的女朋友叫什么",
+    "expected_answer": "莉莉",
+    "must_contain": [
+      "莉莉"
+    ],
+    "must_not_contain": [
+      "小雪"
+    ]
+  },
+  {
+    "question_id": "cn_ku_03",
+    "subtype": "knowledge_update",
+    "user_id": "lme_user_ku_03",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "我的车是大众朗逸"
+      },
+      {
+        "role": "ai",
+        "content": "好的"
+      },
+      {
+        "role": "user",
+        "content": "公司楼下新开了一家咖啡店"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "上个月换了车, 现在开特斯拉 Model Y"
+      },
+      {
+        "role": "ai",
+        "content": "明白了, 已经更新"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户现在开什么车",
+    "expected_answer": "特斯拉 Model Y",
+    "must_contain": [
+      "Model Y"
+    ],
+    "must_not_contain": [
+      "大众朗逸"
+    ]
+  },
+  {
+    "question_id": "cn_ku_04",
+    "subtype": "knowledge_update",
+    "user_id": "lme_user_ku_04",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "我体重 80 公斤"
+      },
+      {
+        "role": "ai",
+        "content": "好的"
+      },
+      {
+        "role": "user",
+        "content": "晚上跑步遇到了好多人"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "经过半年健身, 现在 70 公斤了"
+      },
+      {
+        "role": "ai",
+        "content": "明白了, 已经更新"
+      },
+      {
+        "role": "user",
+        "content": "刚看完一篇关于 AI 的论文"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "地铁上特别挤, 站了一路"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户当前体重是多少",
+    "expected_answer": "70 公斤",
+    "must_contain": [
+      "70"
+    ],
+    "must_not_contain": [
+      "80 公斤"
+    ]
+  },
+  {
+    "question_id": "cn_ku_05",
+    "subtype": "knowledge_update",
+    "user_id": "lme_user_ku_05",
+    "sessions": [
+      {
+        "role": "user",
+        "content": "我手机是 iPhone 14"
+      },
+      {
+        "role": "ai",
+        "content": "好的"
+      },
+      {
+        "role": "user",
+        "content": "明天有个产品评审会"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "刚才喝了一杯美式, 很提神"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "听说下周要降温"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "我换手机了, 用的是 iPhone 16 Pro"
+      },
+      {
+        "role": "ai",
+        "content": "明白了, 已经更新"
+      },
+      {
+        "role": "user",
+        "content": "地铁上特别挤, 站了一路"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      },
+      {
+        "role": "user",
+        "content": "新闻里说股市又跌了"
+      },
+      {
+        "role": "ai",
+        "content": "嗯, 了解了"
+      }
+    ],
+    "question": "用户当前用什么手机",
+    "expected_answer": "iPhone 16 Pro",
+    "must_contain": [
+      "iPhone 16"
+    ],
+    "must_not_contain": [
+      "iPhone 14"
+    ]
+  }
+]

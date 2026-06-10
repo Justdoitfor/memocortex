@@ -56,19 +56,35 @@ _EXTRACT_PROMPT = ChatPromptTemplate.from_messages(
                 "\n"
                 "规则:\n"
                 "- subject: 与用户相关的事实统一用 'user'\n"
-                "- predicate: 必须小写下划线英文 (lives_in / works_at / likes / dislikes / "
-                "  allergic_to / has_pet / married_to / age / occupation / hobby / favorite_food)\n"
-                "- object: 实体名或字面值\n"
+                "- predicate: 必须小写下划线英文. 常用 predicate 列表 (优先复用):\n"
+                "  * 基本属性: age / occupation / gender / married_to / weight_kg / height_cm\n"
+                "  * 地理: lives_in / works_at / hometown / visited\n"
+                "  * 关系: has_pet / has_child / girlfriend / boyfriend / spouse / sibling\n"
+                "  * 偏好: likes / dislikes / favorite_food / favorite_color / hobby\n"
+                "  * 健康: allergic_to / blood_type\n"
+                "  * 物品: owns_car / owns_phone / owns_laptop / uses_camera\n"
+                "  * 能力: speaks_language / educational_background\n"
+                "  * 未在列表中的概念也可以新建 predicate, 保持英文小写下划线即可\n"
+                "- object: 实体名或字面值 (单位用统一格式, e.g. '70 公斤' / 'iPhone 16 Pro')\n"
                 "- 只抽取明确的事实, 不抽取猜测/疑问/否定句\n"
                 "- 时间相关 (e.g. '我以前住上海') 不抽取, 只抽取当前状态\n"
                 "- 同一句话可能产出多个三元组\n"
                 "- 如果没有可抽取的事实, 返回空 triples 列表\n"
                 "\n"
                 "示例:\n"
-                "  '我对花生过敏'           → [(user, allergic_to, 花生)]\n"
-                "  '我搬家了, 现在住北京'    → [(user, lives_in, 北京)]\n"
-                "  '我家有只叫小白的猫'      → [(user, has_pet, 小白)]\n"
-                "  '今天天气真好'           → []  (无可结构化事实)\n"
+                "  '我对花生过敏'              → [(user, allergic_to, 花生)]\n"
+                "  '我搬家了, 现在住北京'       → [(user, lives_in, 北京)]\n"
+                "  '我家有只叫小白的猫'         → [(user, has_pet, 小白)]\n"
+                "  '我会说中文和英语'           → [(user, speaks_language, 中文), (user, speaks_language, 英语)]\n"
+                "  '我女朋友叫小雪'            → [(user, girlfriend, 小雪)]\n"
+                "  '我的车是大众朗逸'           → [(user, owns_car, 大众朗逸)]\n"
+                "  '我手机是 iPhone 14'        → [(user, owns_phone, iPhone 14)]\n"
+                "  '我体重 80 公斤'            → [(user, weight_kg, 80)]\n"
+                "  '我跳槽到字节做基础架构'      → [(user, works_at, 字节), (user, occupation, 基础架构)]\n"
+                "  '今天天气真好'              → []  (无可结构化事实)\n"
+                "\n"
+                "返回 JSON, 格式: "
+                '{{"triples": [{{"subject": "user", "predicate": "lives_in", "object": "北京", "confidence": 0.95}}]}}'
             ),
         ),
         ("human", "{text}"),
@@ -79,14 +95,12 @@ _EXTRACT_PROMPT = ChatPromptTemplate.from_messages(
 async def extract_triples(text: str) -> list[Triple]:
     """从自然语言抽取三元组列表. LLM 失败时返回空列表 (降级)."""
     try:
-        llm = llm_factory.create_chat_model(temperature=0, streaming=False)
-        chain = _EXTRACT_PROMPT | llm.with_structured_output(
-            _ExtractResult, method="function_calling"
-        )
         with metrics.timer("semantic.extract.latency"):
-            result = await chain.ainvoke({"text": text})
-        if isinstance(result, dict):
-            result = _ExtractResult(**result)
+            result = await llm_factory.structured_invoke(
+                _EXTRACT_PROMPT, _ExtractResult, {"text": text}, temperature=0
+            )
+        if result is None:
+            return []
         triples = [
             Triple(
                 subject=t.subject.strip(),
@@ -114,20 +128,36 @@ async def extract_triples(text: str) -> list[Triple]:
 # - list:   可以有多个 object → 倾向 MERGE
 # - versioned: 时间相关, 保留历史 → 倾向 VERSIONED
 _FIELD_SCHEMA: dict[str, str] = {
-    # unique
+    # unique (单值)
     "lives_in": "unique",
     "works_at": "unique",
     "age": "unique",
     "occupation": "unique",
     "married_to": "unique",
     "favorite_food": "unique",
-    # list (multi-value 合理)
+    "favorite_color": "unique",
+    "hometown": "unique",
+    "weight_kg": "unique",
+    "height_cm": "unique",
+    "blood_type": "unique",
+    "girlfriend": "unique",
+    "boyfriend": "unique",
+    "spouse": "unique",
+    "owns_car": "unique",
+    "owns_phone": "unique",
+    "owns_laptop": "unique",
+    "uses_camera": "unique",
+    "educational_background": "unique",
+    # list (多值)
     "allergic_to": "list",
     "likes": "list",
     "dislikes": "list",
     "has_pet": "list",
+    "has_child": "list",
+    "sibling": "list",
     "hobby": "list",
     "speaks_language": "list",
+    "visited": "list",
 }
 
 
@@ -244,8 +274,22 @@ class SemanticMemory:
         action = decision.action if hasattr(decision, "action") else ConflictAction(decision["action"])
 
         if action == ConflictAction.REPLACE:
+            # 收集旧 triple 关联的 episodic source, 一起降权 (避免被 hybrid 召回顶上)
+            stale_episodic_ids: set[str] = set()
             for t in existing:
+                if t.source_memory_id:
+                    stale_episodic_ids.add(t.source_memory_id)
                 await self._kg.delete_triple(user_id, t.id)
+                # 同时删除 Chroma 中的旧 mirror, 避免召回时混入过时事实
+                await self._vector.delete(t.id, user_id)
+            # 把对应的 Episodic 原文 importance 打到 0.05 (近似遗忘)
+            for ep_id in stale_episodic_ids:
+                try:
+                    await self._vector.update_metadata(
+                        ep_id, user_id, {"importance": 0.05, "tier": "cold"}
+                    )
+                except Exception:
+                    pass
             await self._kg.add_triple(user_id, new_triple)
             await self._mirror_to_vector(user_id, new_triple)
             return "replaced"

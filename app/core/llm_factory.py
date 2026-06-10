@@ -5,10 +5,16 @@
 
 from __future__ import annotations
 
+from typing import Any, TypeVar
+
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from loguru import logger
+from pydantic import BaseModel
 
 from app.config import config
+
+_S = TypeVar("_S", bound=BaseModel)
 
 
 class LLMFactory:
@@ -53,6 +59,53 @@ class LLMFactory:
             timeout=timeout,
             max_retries=max_retries,
         )
+
+    @staticmethod
+    async def structured_invoke(
+        prompt: ChatPromptTemplate,
+        schema: type[_S],
+        input_vars: dict[str, Any],
+        temperature: float = 0.0,
+    ) -> _S | None:
+        """统一的结构化输出入口 — 自动 fallback 兼容 thinking 模型.
+
+        DeepSeek-v4-pro / deepseek-reasoner 等 thinking 模型不支持 tool_choice,
+        必须用 json_mode; 普通模型 function_calling 体验更稳. 此 helper 按顺序尝试.
+
+        Args:
+            prompt: ChatPromptTemplate
+            schema: Pydantic 输出模型
+            input_vars: prompt 的 invoke 变量
+            temperature: 默认 0 (结构化输出需要可复现)
+
+        Returns:
+            schema 实例, 或全部尝试失败时 None
+        """
+        llm = LLMFactory.create_chat_model(temperature=temperature, streaming=False)
+
+        # 1. function_calling — 速度快, 但不支持 thinking 模型
+        try:
+            chain = prompt | llm.with_structured_output(schema, method="function_calling")
+            result = await chain.ainvoke(input_vars)
+            if isinstance(result, dict):
+                return schema(**result)
+            return result
+        except Exception as e:
+            msg = str(e)
+            if "tool_choice" not in msg and "function" not in msg.lower():
+                logger.warning(f"structured_invoke function_calling 失败: {e}")
+                return None
+
+        # 2. json_mode fallback — thinking 模型走这条
+        try:
+            chain = prompt | llm.with_structured_output(schema, method="json_mode")
+            result = await chain.ainvoke(input_vars)
+            if isinstance(result, dict):
+                return schema(**result)
+            return result
+        except Exception as e:
+            logger.warning(f"structured_invoke json_mode 也失败: {e}")
+            return None
 
 
 llm_factory = LLMFactory()

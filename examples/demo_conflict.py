@@ -21,17 +21,22 @@ if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8")
 
 from app.config import config
-from app.models import WriteRequest
+from app.models import MemoryType, WriteRequest
 from app.orchestrator import orchestrator
 from app.storage import get_metadata
 from app.utils.logger import setup_logger
 
 
 async def write_and_log(user_id: str, content: str) -> None:
-    res = await orchestrator.write(WriteRequest(user_id=user_id, content=content))
-    # 等异步 semantic 抽取
-    await asyncio.sleep(2.0)
-    print(f"  写入: {content}  → memory_id={res.memory_id[:8]}")
+    """同步走 SEMANTIC 路径 (LLM 抽取 + 仲裁), 而不是 EPISODIC 异步路径,
+    保证 demo 中能立刻看到完整结果."""
+    res = await orchestrator.write(
+        WriteRequest(user_id=user_id, content=content, type=MemoryType.SEMANTIC)
+    )
+    arb_note = ""
+    if res.arbitration:
+        arb_note = f"  [arbitration={res.arbitration.action.value}]"
+    print(f"  写入: {content}{arb_note}  → memory_id={res.memory_id[:8]}")
 
 
 async def show_arbitrations(user_id: str) -> None:

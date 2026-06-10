@@ -18,12 +18,17 @@ import argparse
 import asyncio
 import glob
 import json
+import sys
 import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from app.models import WriteRequest
+# Windows 终端 GBK 编码兜底
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding="utf-8")
+
+from app.models import MemoryType, WriteRequest
 from app.orchestrator import orchestrator
 from app.storage import get_metadata
 from app.utils.logger import setup_logger
@@ -52,21 +57,19 @@ async def run_cn_scenario(scenario: dict[str, Any]) -> dict[str, Any]:
     except Exception:
         pass
 
-    # 2. 按序写入
+    # 2. 按序写入 — 走 SEMANTIC 路径确保 LLM 抽取 + 仲裁同步完成 (可复现)
     start = time.perf_counter()
     for w in scenario["writes"]:
         await orchestrator.write(
             WriteRequest(
                 user_id=user_id,
                 content=w["content"],
-                type=w.get("type", "episodic"),
+                type=MemoryType(w.get("type", "semantic")),
             )
         )
-        # 让后台 semantic 抽取有时间跑
-        await asyncio.sleep(0.2)
 
-    # 等异步 semantic 抽取任务完成 (fire-and-forget 的)
-    await asyncio.sleep(1.0)
+    # 兜底等一下 (其实 SEMANTIC 已经 sync 了)
+    await asyncio.sleep(0.5)
 
     # 3. 召回
     resp = await orchestrator.search(
@@ -143,14 +146,14 @@ async def run_suite_cn() -> dict[str, Any]:
         print(f"  [{sc['id']}] {sc['name']:<35} ...", end=" ", flush=True)
         try:
             res = await run_cn_scenario(sc)
-            emoji = "✅" if res["pass"] else "❌"
+            emoji = "[PASS]" if res["pass"] else "[FAIL]"
             print(f"{emoji}  ({res['latency_ms']:.0f}ms)")
             for cname, cres in res["checks"].items():
                 if not cres.get("pass", True):
-                    print(f"        ✗ {cname}: {cres}")
+                    print(f"        x {cname}: {cres}")
             results.append(res)
         except Exception as e:
-            print(f"💥 异常: {e}")
+            print(f"[ERROR] {e}")
             results.append({"id": sc["id"], "name": sc["name"], "pass": False, "error": str(e)})
 
     passed = sum(1 for r in results if r.get("pass"))
@@ -169,12 +172,15 @@ async def run_suite_cn() -> dict[str, Any]:
 
 
 async def run_suite_longmemeval() -> dict[str, Any]:
-    """LongMemEval 子集 — MVP 阶段先用占位 (后续 Phase 7 补 30 题)."""
-    files = sorted(glob.glob(str(SCENARIO_DIRS["longmemeval"] / "sample_*.json")))
-    if not files:
-        print("[longmemeval] 暂无数据集 — 占位通过. 可执行 `make eval-longmem-fetch` 下载.")
-        return {"suite": "longmemeval", "skipped": True, "pass_rate": 0.0}
-    return {"suite": "longmemeval", "skipped": True}  # MVP 留扩展点
+    """LongMemEval-style 中文长记忆子集 — 30 题."""
+    from tests.eval.longmemeval.adapter import is_available
+    from tests.eval.longmemeval.runner import run_suite as run_longmem_suite
+
+    if not is_available():
+        print("[longmemeval] 数据集未生成. 执行: "
+              "uv run python -m tests.eval.longmemeval.build_dataset")
+        return {"suite": "longmemeval_cn30", "skipped": True, "pass_rate": 0.0}
+    return await run_longmem_suite(use_llm_judge=False)
 
 
 # ── 主入口 ────────────────────────────────────────────────────────────
@@ -227,7 +233,7 @@ async def main_async(suite: str) -> None:
             prev_rate = prev_data.get("pass_rate", 0.0)
             cur_rate = current.get("pass_rate", 0.0)
             delta = cur_rate - prev_rate
-            sym = "↑" if delta > 0 else ("↓" if delta < 0 else "=")
+            sym = "UP" if delta > 0 else ("DOWN" if delta < 0 else "==")
             print(
                 f"[{sname}] 本次 {cur_rate * 100:.0f}%  "
                 f"上次 {prev_rate * 100:.0f}%  {sym} {delta * 100:+.0f}%"

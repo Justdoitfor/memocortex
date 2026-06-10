@@ -15,6 +15,8 @@ from typing import Any
 
 from loguru import logger
 
+# 强制触发 arbitrator 模块 init, 把 ConflictArbitrator 注入 SemanticMemory
+import app.arbitrator  # noqa: F401
 from app.memories import (
     episodic_memory,
     procedural_memory,
@@ -41,7 +43,31 @@ class MemoryOrchestrator:
     def __init__(self) -> None:
         self._meta = get_metadata()
         self._vector = get_vector_store()
+        # 持有 background tasks 引用, 防止被 GC 提前回收 (Python 3.11+ 已知问题)
+        self._bg_tasks: set = set()
         logger.info("MemoryOrchestrator 初始化完成")
+
+    def _spawn_bg(self, coro) -> None:
+        """fire-and-forget 启动后台任务, 同时持有引用避免 GC 提前回收."""
+        import asyncio
+
+        task = asyncio.create_task(coro)
+        self._bg_tasks.add(task)
+        task.add_done_callback(self._bg_tasks.discard)
+
+    async def wait_pending(self, timeout: float = 30.0) -> None:
+        """等待所有未完成的 background tasks. eval / test 场景需要确定性."""
+        import asyncio
+
+        if not self._bg_tasks:
+            return
+        pending = list(self._bg_tasks)
+        try:
+            await asyncio.wait_for(
+                asyncio.gather(*pending, return_exceptions=True), timeout=timeout
+            )
+        except asyncio.TimeoutError:
+            logger.warning(f"wait_pending 超时, 还有 {len(self._bg_tasks)} 个任务未完成")
 
     # ────────────────────────────────────────────────────────────────────
     # write — 路由 + 写入 + (可选) semantic 抽取
@@ -99,10 +125,8 @@ class MemoryOrchestrator:
 
         else:  # EPISODIC (默认)
             memory_id = await episodic_memory.write(record)
-            # 异步触发 semantic 抽取 — fire and forget
-            import asyncio
-
-            asyncio.create_task(
+            # 异步触发 semantic 抽取 — 用 _spawn_bg 持有引用避免 GC
+            self._spawn_bg(
                 self._extract_semantic_safely(req.user_id, req.content, record.id)
             )
 

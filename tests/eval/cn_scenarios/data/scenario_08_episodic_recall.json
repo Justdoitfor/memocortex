@@ -4,11 +4,11 @@
   "description": "测试 5 条 episodic 写入后, 能否准确召回特定事件 (长期记忆基础能力).",
   "user_id": "eval_user_08",
   "writes": [
-    {"content": "上周一去看了《沙丘 3》, 视觉特效很震撼"},
-    {"content": "周二开始读《人类简史》, 已经读了 100 页"},
-    {"content": "周四参加了公司的 Hackathon, 我们组拿了第二名"},
-    {"content": "周五跟家人吃了火锅, 庆祝妈妈生日"},
-    {"content": "周日下午去打了 2 小时网球"}
+    {"content": "上周一去看了《沙丘 3》, 视觉特效很震撼", "type": "episodic"},
+    {"content": "周二开始读《人类简史》, 已经读了 100 页", "type": "episodic"},
+    {"content": "周四参加了公司的 Hackathon, 我们组拿了第二名", "type": "episodic"},
+    {"content": "周五跟家人吃了火锅, 庆祝妈妈生日", "type": "episodic"},
+    {"content": "周日下午去打了 2 小时网球", "type": "episodic"}
   ],
   "query": "用户最近看了什么电影",
   "expected_answer": "沙丘 3",
