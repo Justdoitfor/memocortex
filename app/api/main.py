@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from app import __version__
-from app.api import admin, entities, health, memories, profile
+from app.api import admin, demo, entities, health, memories, profile, stats
 from app.config import config
 from app.reflection import start_scheduler, stop_scheduler
 from app.storage import get_kg, get_metadata
@@ -64,6 +64,8 @@ app.include_router(health.router, tags=["健康检查"])
 app.include_router(memories.router, prefix="/v1", tags=["Memories"])
 app.include_router(profile.router, prefix="/v1", tags=["Profile"])
 app.include_router(entities.router, prefix="/v1", tags=["Entities"])
+app.include_router(stats.router, prefix="/v1", tags=["Stats"])
+app.include_router(demo.router, prefix="/v1", tags=["Demo"])
 app.include_router(admin.router, prefix="/admin", tags=["Admin"])
 
 

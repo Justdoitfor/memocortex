@@ -297,3 +297,23 @@ class SQLiteMetadataStore:
                 "details": orm.details,
                 "created_at": orm.created_at.isoformat(),
             }
+
+    async def list_eval_runs(self, suite: str, limit: int = 20) -> list[dict[str, Any]]:
+        """查询某 suite 的历史跑分 (按时间倒序)."""
+        async with self._sessionmaker() as session:
+            stmt = (
+                select(EvalRunORM)
+                .where(EvalRunORM.suite == suite)
+                .order_by(EvalRunORM.created_at.desc())
+                .limit(limit)
+            )
+            result = await session.execute(stmt)
+            return [
+                {
+                    "suite": o.suite,
+                    "score": o.score,
+                    "details": o.details,
+                    "created_at": o.created_at.isoformat(),
+                }
+                for o in result.scalars().all()
+            ]
