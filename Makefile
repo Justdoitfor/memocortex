@@ -79,3 +79,8 @@ web:
 
 web-build:
 	cd web && npm run build
+
+# 构建静态站点并用 Python http.server 起服务 (避开 Next dev/prod 的 turbopack runtime bug)
+web-serve:
+	cd web && npm run build
+	cd web/out && python -m http.server 3000
