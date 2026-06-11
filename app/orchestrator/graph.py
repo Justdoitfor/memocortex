@@ -173,24 +173,35 @@ class MemoryOrchestrator:
             score_threshold=score_threshold,
         )
 
-        # 如果 session_id 给了, 把 Working Memory 最近几条作为最高优先级前置
-        if session_id and (types is None or MemoryType.WORKING in types):
-            working = await working_memory.read(user_id, session_id, limit=3)
-            # working 直接给满分前置, 不混入向量分数
-            working_results = [
-                RecallResult(
-                    record=w,
-                    signals=__import__(
-                        "app.models", fromlist=["RecallSignals"]
-                    ).RecallSignals(final_score=1.0),
-                    rank=0,
-                )
-                for w in working
-            ]
-            results = working_results + [r for r in results if r.record.type != MemoryType.WORKING]
-            # 重排 rank
-            for i, r in enumerate(results, 1):
-                r.rank = i
+        # Working Memory 不进 ChromaDB, 必须显式注入到 Hybrid 召回结果中:
+        #   1. 如果显式传了 session_id, 取该 session 最近 3 条
+        #   2. 否则 (Playground / 跨 session 查询场景), 取该 user 所有 buckets 的最近 3 条
+        # 两种情况下 working 都以 final_score=1.0 前置, 不混入向量分数
+        if types is None or MemoryType.WORKING in types:
+            working: list = []
+            if session_id:
+                working = await working_memory.read(user_id, session_id, limit=3)
+            else:
+                # 跨 session: 把该 user 所有 working buckets 合并按时间倒序取 3 条
+                all_working = await working_memory.read_all_sessions(user_id, limit=3)
+                working = all_working
+
+            if working:
+                from app.models import RecallSignals
+                working_results = [
+                    RecallResult(
+                        record=w,
+                        signals=RecallSignals(final_score=1.0),
+                        rank=0,
+                    )
+                    for w in working
+                ]
+                results = working_results + [
+                    r for r in results if r.record.type != MemoryType.WORKING
+                ]
+                # 重排 rank
+                for i, r in enumerate(results, 1):
+                    r.rank = i
 
         latency_ms = (time.perf_counter() - start) * 1000
         return SearchResponse(

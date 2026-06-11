@@ -1,19 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Brain, Network, Zap, ShieldCheck, Layers, Cpu } from "lucide-react";
+import { ArrowRight, Brain, Network, Zap, ShieldCheck, Layers, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 const MEMORY_TYPES = [
-  {
-    name: "Working",
-    cn: "工作记忆",
-    icon: Cpu,
-    desc: "当前会话的短期上下文, 内存 LRU + SQLite 备份, FIFO 淘汰",
-    color: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300",
-  },
   {
     name: "Episodic",
     cn: "情景记忆",
@@ -39,8 +32,15 @@ const MEMORY_TYPES = [
     name: "Reflective",
     cn: "反思记忆",
     icon: Brain,
-    desc: "用户画像 JSON Blob, 后台 Worker 周期刷新, 注入 SystemMessage",
+    desc: "显式用户画像, Reflection Worker 从 Semantic 聚合, 注入 SystemMessage",
     color: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
+  },
+  {
+    name: "Implicit",
+    cn: "隐式偏好",
+    icon: Sparkles,
+    desc: "Pattern Miner 从行为信号 (regenerate/correction/format_pref) 自动挖掘",
+    color: "bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/30 dark:text-fuchsia-300",
   },
 ] as const;
 
@@ -56,7 +56,7 @@ const COMPARISON = [
     mem0: "2 类 + entity",
     zep: "时序为主",
     letta: "单 Agent OS",
-    ours: "5 类 (Tulving 认知分类)",
+    ours: "5 类长期 (Episodic/Semantic/Procedural/Reflective/Implicit)",
   },
   {
     key: "召回信号",
@@ -91,7 +91,7 @@ const COMPARISON = [
     mem0: "Agent 内部模块",
     zep: "时序记忆库",
     letta: "Agent OS",
-    ours: "Agent-agnostic 基础设施",
+    ours: "MCP-Native 长期记忆基础设施",
   },
 ];
 
@@ -105,12 +105,14 @@ export default function Home() {
           <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
             <span className="text-emerald-600">MemoCortex</span> —
             <br />
-            Agent-agnostic 长期记忆中间件
+            MCP-Native 长期记忆基础设施
           </h1>
           <p className="max-w-3xl text-base text-zinc-600 dark:text-zinc-400 md:text-lg">
-            借鉴 Tulving 1985 认知科学的 <b>5 类分层记忆</b>, 4 信号 Hybrid Recall,
-            LLM-as-Arbitrator 自动冲突消解 — 通过 REST / Python SDK / MCP 三种协议
-            接入 LangChain / AutoGen / CrewAI 等任意 Agent 框架。
+            为 Claude Desktop / Cursor / Cline 等 MCP 客户端原生设计的 Agent 长期
+            记忆服务 — <b>5 类长期记忆</b>(Episodic / Semantic / Procedural /
+            Reflective / Implicit)+ 4 信号 Hybrid Recall + LLM-as-Arbitrator
+            冲突消解 + Staleness Detection 软废弃 + Pattern Miner 隐式偏好挖掘。
+            MCP 工具一等公民, 同时提供 REST / Python SDK 接入 LangChain 等其他框架。
           </p>
         </div>
 
@@ -124,7 +126,7 @@ export default function Home() {
             <Link href="/conflict">看 LLM 冲突仲裁动画</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/arch">架构 & 6 种接入</Link>
+            <Link href="/arch">架构 & MCP 接入</Link>
           </Button>
         </div>
 
@@ -141,9 +143,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5 类记忆 */}
+      {/* 5 类长期记忆 */}
       <section>
-        <h2 className="mb-4 text-2xl font-semibold tracking-tight">5 类分层记忆架构</h2>
+        <h2 className="mb-4 text-2xl font-semibold tracking-tight">5 类长期分层记忆架构</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
           {MEMORY_TYPES.map((m) => {
             const Icon = m.icon;

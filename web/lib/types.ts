@@ -11,7 +11,8 @@ export type MemoryType =
   | "episodic"
   | "semantic"
   | "procedural"
-  | "reflective";
+  | "reflective"
+  | "implicit";
 
 export type ConflictAction = "replace" | "merge" | "versioned" | "ignore";
 

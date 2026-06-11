@@ -92,6 +92,29 @@ class WorkingMemory:
             records = records[:limit]
         return records
 
+    async def read_all_sessions(
+        self,
+        user_id: str,
+        limit: int | None = None,
+    ) -> list[MemoryRecord]:
+        """跨 session 取该用户的所有 working memory, 按 created_at 倒序.
+
+        用途: Hybrid Recall 在没有 session_id 时也能召回 Working Memory
+        (Playground / 跨 session 查询场景). 生产推荐显式传 session_id 走 read().
+        """
+        with self._lock:
+            all_records: list[MemoryRecord] = []
+            for (uid, _sid), bucket in self._buckets.items():
+                if uid != user_id:
+                    continue
+                all_records.extend(bucket.values())
+        now = datetime.now()
+        all_records = [r for r in all_records if not r.ttl_at or r.ttl_at > now]
+        all_records.sort(key=lambda r: r.created_at, reverse=True)
+        if limit:
+            all_records = all_records[:limit]
+        return all_records
+
     async def clear(self, user_id: str, session_id: str | None = None) -> int:
         """清空一个会话的 working memory (会话结束时调用)."""
         with self._lock:

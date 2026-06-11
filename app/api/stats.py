@@ -1,4 +1,4 @@
-"""/v1/stats — 给前端 Playground 用的实时记忆看板"""
+"""/v1/stats — 给前端 Playground 用的实时记忆看板 (5 类长期记忆)"""
 
 from __future__ import annotations
 
@@ -8,7 +8,6 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.memories.working import working_memory
 from app.models import MemoryType
 from app.storage import get_kg, get_metadata
 
@@ -42,7 +41,7 @@ class UserStatsResponse(BaseModel):
 @router.get(
     "/stats/{user_id}",
     response_model=UserStatsResponse,
-    summary="一次拉取该用户的 5 类记忆 + KG + 画像 + 审计计数",
+    summary="一次拉取该用户的 5 类长期记忆 + KG + 画像 + 审计计数",
 )
 async def get_user_stats(user_id: str, recent_n: int = 5) -> UserStatsResponse:
     meta = get_metadata()
@@ -51,9 +50,10 @@ async def get_user_stats(user_id: str, recent_n: int = 5) -> UserStatsResponse:
     counts: dict[str, int] = {}
     recent: dict[str, list[_MemoryItem]] = {}
 
-    # Working / Episodic / Semantic / Procedural — 走 list_memories
-    for mtype in [MemoryType.WORKING, MemoryType.EPISODIC,
-                  MemoryType.SEMANTIC, MemoryType.PROCEDURAL]:
+    # 5 类长期记忆里有 4 类走 list_memories: Episodic/Semantic/Procedural/Implicit
+    # Reflective 是用户画像 JSON blob, 不在 memories 表
+    for mtype in [MemoryType.EPISODIC, MemoryType.SEMANTIC,
+                  MemoryType.PROCEDURAL, MemoryType.IMPLICIT]:
         items = await meta.list_memories(user_id, memory_type=mtype.value, limit=100)
         counts[mtype.value] = len(items)
         recent[mtype.value] = [
@@ -67,24 +67,6 @@ async def get_user_stats(user_id: str, recent_n: int = 5) -> UserStatsResponse:
             )
             for r in items[:recent_n]
         ]
-
-    # Working 优先走内存 LRU (更新鲜)
-    try:
-        in_mem = await working_memory.read(user_id, session_id=None, limit=recent_n)
-        if in_mem:
-            recent[MemoryType.WORKING.value] = [
-                _MemoryItem(
-                    id=r.id,
-                    content=r.content[:300],
-                    type=r.type.value,
-                    importance=r.importance,
-                    created_at=r.created_at.isoformat(),
-                    tier=r.tier,
-                )
-                for r in in_mem
-            ]
-    except Exception:
-        pass
 
     # Reflective — 单独的 profile blob
     profile = await meta.get_profile(user_id)

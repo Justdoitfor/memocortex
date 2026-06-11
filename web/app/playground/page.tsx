@@ -37,11 +37,12 @@ const TYPE_COLORS: Record<MemoryType, string> = {
   semantic: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
   procedural: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
   reflective: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300",
+  implicit: "bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900/30 dark:text-fuchsia-300",
 };
 
 const TYPE_LABELS: Record<MemoryType, string> = {
   working: "Working", episodic: "Episodic", semantic: "Semantic",
-  procedural: "Procedural", reflective: "Reflective",
+  procedural: "Procedural", reflective: "Reflective", implicit: "Implicit",
 };
 
 export default function PlaygroundPage() {
@@ -50,8 +51,13 @@ export default function PlaygroundPage() {
   const [userId, setUserId] = useState("alice");
   const [content, setContent] = useState("");
   const [writeType, setWriteType] = useState<MemoryType>("semantic");
+  // procedural 专用: 步骤列表 (一行一步)
+  const [proceduralSteps, setProceduralSteps] = useState("");
   const [query, setQuery] = useState("");
   const [searchResp, setSearchResp] = useState<SearchResponse | null>(null);
+
+  // Playground 固定的 session_id, 让 Working Memory 有归属
+  const SESSION_ID = "playground";
 
   const statsQ = useQuery({
     queryKey: ["stats", userId],
@@ -59,15 +65,37 @@ export default function PlaygroundPage() {
   });
 
   const writeMut = useMutation({
-    mutationFn: () => writeMemory({ user_id: userId, content, type: writeType }),
+    mutationFn: () => {
+      const params: Parameters<typeof writeMemory>[0] = {
+        user_id: userId,
+        content,
+        type: writeType,
+        session_id: SESSION_ID,
+      };
+      // Procedural 需要 structured.steps + task_pattern
+      if (writeType === "procedural" && proceduralSteps.trim()) {
+        params.structured = {
+          task_pattern: content,
+          steps: proceduralSteps.split("\n").map((s) => s.trim()).filter(Boolean),
+        };
+      }
+      return writeMemory(params);
+    },
     onSuccess: () => {
       setContent("");
+      setProceduralSteps("");
       qc.invalidateQueries({ queryKey: ["stats", userId] });
     },
   });
 
   const searchMut = useMutation({
-    mutationFn: () => searchMemories({ user_id: userId, query, top_k: 5 }),
+    mutationFn: () =>
+      searchMemories({
+        user_id: userId,
+        query,
+        top_k: 5,
+        session_id: SESSION_ID,
+      }),
     onSuccess: (data) => setSearchResp(data),
   });
 
@@ -94,7 +122,7 @@ export default function PlaygroundPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Playground</h1>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            亲手写入记忆, 看 5 类记忆累积, 实时观察 4 信号 Hybrid Recall 决策过程
+            亲手写入记忆, 看 5 类长期记忆累积, 实时观察 4 信号 Hybrid Recall 决策过程
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -137,12 +165,14 @@ export default function PlaygroundPage() {
                 ? "走 SEMANTIC: LLM 自动抽 fact 进 KG + 冲突仲裁"
                 : writeType === "episodic"
                 ? "走 EPISODIC: 时序事件 + 异步触发 Semantic 抽取"
-                : "走 WORKING: 当前会话短期上下文, FIFO 淘汰"}
+                : writeType === "procedural"
+                ? "走 PROCEDURAL: 任务模板 + 步骤列表, 按使用频率衰减"
+                : "走 REFLECTIVE: 由后台 Worker 从 Semantic 聚合, 不可手动写"}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex gap-1">
-              {(["semantic", "episodic", "working"] as MemoryType[]).map((t) => (
+            <div className="flex flex-wrap gap-1">
+              {(["semantic", "episodic", "procedural"] as MemoryType[]).map((t) => (
                 <button
                   key={t}
                   onClick={() => setWriteType(t)}
@@ -156,6 +186,26 @@ export default function PlaygroundPage() {
                   {TYPE_LABELS[t]}
                 </button>
               ))}
+              <button
+                disabled
+                title="Reflective Memory 由 Reflection Worker 从 Semantic 聚合生成的显式用户画像, 业务方不应手动写"
+                className={cn(
+                  "rounded px-2 py-1 text-xs cursor-not-allowed",
+                  TYPE_COLORS["reflective"] + " opacity-50"
+                )}
+              >
+                Reflective 🔒
+              </button>
+              <button
+                disabled
+                title="Implicit Memory 由 Pattern Miner 从行为信号挖掘的隐式偏好, 业务方不应手动写 (Phase 2 上线)"
+                className={cn(
+                  "rounded px-2 py-1 text-xs cursor-not-allowed",
+                  TYPE_COLORS["implicit"] + " opacity-50"
+                )}
+              >
+                Implicit 🔒
+              </button>
             </div>
             <Textarea
               value={content}
@@ -168,6 +218,22 @@ export default function PlaygroundPage() {
                 }
               }}
             />
+            {writeType === "procedural" && (
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                  步骤列表 (一行一步)
+                </label>
+                <Textarea
+                  value={proceduralSteps}
+                  onChange={(e) => setProceduralSteps(e.target.value)}
+                  placeholder={"用 EXPLAIN 看执行计划\n检查索引覆盖情况\n评估是否要加联合索引"}
+                  className="min-h-[80px] font-mono text-xs"
+                />
+                <div className="text-[10px] text-zinc-400">
+                  task_pattern 用 content, steps 自动从换行拆分
+                </div>
+              </div>
+            )}
             <Button
               onClick={() => writeMut.mutate()}
               disabled={!content.trim() || writeMut.isPending}
@@ -226,7 +292,7 @@ export default function PlaygroundPage() {
           </CardContent>
         </Card>
 
-        {/* ── 中:5 类记忆看板 + KG 图 ───────────────── */}
+        {/* ── 中:5 类长期记忆看板 + KG 图 ───────────────── */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base">记忆看板</CardTitle>
@@ -236,7 +302,7 @@ export default function PlaygroundPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-5 gap-1">
-              {(Object.keys(TYPE_LABELS) as MemoryType[]).map((t) => (
+              {(["episodic", "semantic", "procedural", "reflective", "implicit"] as MemoryType[]).map((t) => (
                 <div
                   key={t}
                   className={cn("rounded-lg p-2 text-center", TYPE_COLORS[t])}

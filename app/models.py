@@ -15,13 +15,27 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class MemoryType(str, Enum):  # noqa: UP042  — 保持 Pydantic v2 兼容
-    """5 类分层记忆 — 借鉴 Tulving 1985 认知科学分类."""
+    """5 类长期分层记忆 (对外 API 暴露).
 
-    WORKING = "working"           # 当前会话上下文 (短期)
+    理论根基:
+      - Tulving 1985 long-term memory 三分类 → EPISODIC / SEMANTIC / PROCEDURAL
+      - 自研 REFLECTIVE: 显式用户画像 (Worker 周期从 Semantic 聚合)
+      - 自研 IMPLICIT: 从行为信号挖掘的隐式偏好 (Pattern Miner 后台生成)
+        参考 Honcho 的 dialectic pattern inference 思路
+
+    WORKING (Baddeley 1974 short-term memory) 在内部保留作为 Episodic 缓冲层,
+    **不对外 API 暴露** — 短期会话上下文是上游 Agent 框架 (LangGraph state /
+    Redis) 的职责, 不是 *长期* 记忆中间件的职责.
+    """
+
     EPISODIC = "episodic"         # 时序事件 ("X 时间发生了 Y")
     SEMANTIC = "semantic"         # 事实知识 (用户偏好/属性, 三元组)
     PROCEDURAL = "procedural"     # 程序性 (任务模板, 解决方法)
-    REFLECTIVE = "reflective"     # 元记忆 / 用户画像 (由 reflection 生成)
+    REFLECTIVE = "reflective"     # 元记忆 / 显式用户画像 (Worker 聚合)
+    IMPLICIT = "implicit"         # 隐式偏好 (Pattern Miner 从行为信号挖掘)
+
+    # 内部使用, 不对外 API 暴露 — Episodic 路径的可选短期缓冲
+    WORKING = "working"
 
 
 class MemoryRecord(BaseModel):
