@@ -38,6 +38,27 @@ class MemoryType(str, Enum):  # noqa: UP042  — 保持 Pydantic v2 兼容
     WORKING = "working"
 
 
+class SourceType(str, Enum):  # noqa: UP042
+    """记忆来源类型 — 影响 effective_strength 计算的 source_weight."""
+
+    EXPLICIT_STATEMENT = "explicit_statement"  # 用户亲口说的 → 1.0
+    AGENT_CONFIRMED = "agent_confirmed"        # Agent 推断后用户确认 → 0.85
+    INFERRED = "inferred"                      # 纯推断, 未经确认 → 0.60
+    CORRECTED = "corrected"                    # 用户主动纠正的, 最高权重 → 1.20
+    DISTILLED = "distilled"                    # 从 Episodic 提炼成 Semantic → 0.90
+    MERGED = "merged"                          # 多条合并 → 0.95
+
+
+SOURCE_WEIGHTS: dict[str, float] = {
+    SourceType.EXPLICIT_STATEMENT.value: 1.00,
+    SourceType.AGENT_CONFIRMED.value: 0.85,
+    SourceType.INFERRED.value: 0.60,
+    SourceType.CORRECTED.value: 1.20,
+    SourceType.DISTILLED.value: 0.90,
+    SourceType.MERGED.value: 0.95,
+}
+
+
 class MemoryRecord(BaseModel):
     """单条记忆 — 统一数据模型, 5 类记忆都用此结构."""
 
@@ -56,6 +77,28 @@ class MemoryRecord(BaseModel):
     # 重要度 (0-1), 入库时 LLM/启发式打分, reflection 可更新
     importance: float = Field(default=0.5, ge=0.0, le=1.0)
 
+    # ── Phase 1: 置信度生命周期 (Staleness Detection) ────────────────────
+    confidence_score: float = Field(
+        default=0.7, ge=0.0, le=1.0,
+        description="基础置信度 — 越高越可信, 受 source_type 影响"
+    )
+    source_type: str = Field(
+        default=SourceType.EXPLICIT_STATEMENT.value,
+        description="记忆来源, 影响 effective_strength 计算 (见 SOURCE_WEIGHTS)"
+    )
+    staleness_signal: bool = Field(
+        default=False,
+        description="是否检测到矛盾 → True 时 effective_strength × 0.2 (软废弃)"
+    )
+    superseded_by: str | None = Field(
+        default=None,
+        description="若被新记忆取代, 指向新记忆 ID (双向链接, 可追溯历史)"
+    )
+    decay_rate: float = Field(
+        default=0.01, ge=0.0,
+        description="个性化衰减系数 λ, 用于 e^(-λ×active_days) (默认半衰期约 70 天)"
+    )
+
     # 时序
     created_at: datetime = Field(default_factory=datetime.now)
     last_recalled_at: datetime | None = None
@@ -69,7 +112,7 @@ class MemoryRecord(BaseModel):
     # 额外标签 (业务方自定义)
     tags: list[str] = Field(default_factory=list)
 
-    # 来源 (供审计与冲突仲裁追溯)
+    # 来源 (供审计与冲突仲裁追溯) — 保留以兼容旧调用方
     source: str = Field(default="explicit", description="explicit / distilled / merged / inferred")
 
     @field_validator("type", mode="before")
@@ -88,6 +131,11 @@ class MemoryRecord(BaseModel):
             "session_id": self.session_id or "",
             "type": self.type.value,
             "importance": self.importance,
+            "confidence_score": self.confidence_score,
+            "source_type": self.source_type,
+            "staleness_signal": 1 if self.staleness_signal else 0,
+            "superseded_by": self.superseded_by or "",
+            "decay_rate": self.decay_rate,
             "created_at_iso": self.created_at.isoformat(),
             "created_at_ts": self.created_at.timestamp(),
             "recall_count": self.recall_count,
@@ -179,6 +227,15 @@ class WriteRequest(BaseModel):
     importance: float | None = None
     tags: list[str] = Field(default_factory=list)
     structured: dict[str, Any] = Field(default_factory=dict)
+    # Phase 1: 业务方可显式选冲突消解策略
+    conflict_strategy: str = Field(
+        default="arbitrator",
+        description="arbitrator (LLM 决策, 默认) / staleness (软废弃, 跳过 LLM) / auto (LLM 失败自动 fallback)",
+    )
+    source_type: str | None = Field(
+        default=None,
+        description="覆盖默认 source_type (explicit_statement). 上游 Agent 可标 corrected / inferred 等",
+    )
 
 
 class WriteResponse(BaseModel):

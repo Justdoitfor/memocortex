@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-10T17:14:46.347112",
+  "timestamp": "2026-06-11T13:54:37.605595",
   "suites": {
     "cn_scenarios": {
       "suite": "cn_scenarios",
@@ -11,7 +11,7 @@
           "id": "01",
           "name": "用户搬家 — 应 REPLACE",
           "pass": true,
-          "latency_ms": 36541.1,
+          "latency_ms": 36468.6,
           "top_3": [
             "user lives_in 上海浦东"
           ],
@@ -33,7 +33,7 @@
           "id": "02",
           "name": "过敏原合并 — 应 MERGE",
           "pass": true,
-          "latency_ms": 10162.7,
+          "latency_ms": 9760.9,
           "top_3": [
             "user allergic_to 芝麻",
             "user allergic_to 花生"
@@ -56,7 +56,7 @@
           "id": "03",
           "name": "职业变更 — 应 REPLACE",
           "pass": true,
-          "latency_ms": 17019.3,
+          "latency_ms": 16327.9,
           "top_3": [
             "user occupation AI 工程师",
             "user works_at 字节跳动"
@@ -80,7 +80,7 @@
           "id": "04",
           "name": "宠物多养 — 应 MERGE",
           "pass": true,
-          "latency_ms": 25019.3,
+          "latency_ms": 10928.7,
           "top_3": [
             "user has_pet 小白",
             "user has_pet 旺财"
@@ -103,11 +103,11 @@
           "id": "05",
           "name": "爱好新增 — 应 MERGE",
           "pass": true,
-          "latency_ms": 14888.7,
+          "latency_ms": 18084.6,
           "top_3": [
             "user likes 摄影",
-            "user hobby 打篮球",
-            "user hobby 爬山"
+            "user likes 爬山",
+            "user hobby 打篮球"
           ],
           "checks": {
             "must_contain_all": {
@@ -127,7 +127,7 @@
           "id": "06",
           "name": "矛盾事实 — 应 IGNORE 或 REPLACE 后者",
           "pass": true,
-          "latency_ms": 13830.3,
+          "latency_ms": 9622.5,
           "top_3": [
             "user age 30"
           ],
@@ -145,7 +145,7 @@
           "id": "07",
           "name": "多语言能力新增 — 应 MERGE",
           "pass": true,
-          "latency_ms": 20070.5,
+          "latency_ms": 30710.6,
           "top_3": [
             "user speaks_language 英语",
             "user speaks_language 日语",
@@ -170,7 +170,7 @@
           "id": "08",
           "name": "时间敏感 — 跨 session 长期记忆",
           "pass": true,
-          "latency_ms": 876.6,
+          "latency_ms": 872.4,
           "top_3": [
             "周二开始读《人类简史》, 已经读了 100 页",
             "上周一去看了《沙丘 3》, 视觉特效很震撼",
@@ -182,634 +182,6 @@
               "missing": []
             }
           }
-        }
-      ]
-    },
-    "longmemeval": {
-      "suite": "longmemeval_cn30",
-      "total": 30,
-      "passed": 26,
-      "pass_rate": 0.8666666666666667,
-      "by_subtype": {
-        "single_session": {
-          "passed": 9,
-          "total": 10
-        },
-        "multi_session": {
-          "passed": 9,
-          "total": 10
-        },
-        "temporal_reasoning": {
-          "passed": 5,
-          "total": 5
-        },
-        "knowledge_update": {
-          "passed": 3,
-          "total": 5
-        }
-      },
-      "results": [
-        {
-          "question_id": "cn_ss_01",
-          "subtype": "single_session",
-          "pass": true,
-          "latency_ms": 10289.6,
-          "top_3": [
-            "我最喜欢的咖啡店是 Blue Bottle, 上海安福路那家",
-            "user favorite_coffee_shop Blue Bottle (上海安福路)",
-            "公司楼下新开了一家咖啡店"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户最喜欢的咖啡店是哪家",
-          "expected_answer": "Blue Bottle"
-        },
-        {
-          "question_id": "cn_ss_02",
-          "subtype": "single_session",
-          "pass": false,
-          "latency_ms": 18830.5,
-          "top_3": [
-            "user grows 迷迭香",
-            "user watches_tv_show 古装剧",
-            "user owns_earphone 耳机"
-          ],
-          "checks": {
-            "contain": {
-              "pass": false,
-              "missing": [
-                "薄荷"
-              ]
-            }
-          },
-          "question": "用户家阳台种了什么植物",
-          "expected_answer": "薄荷 迷迭香"
-        },
-        {
-          "question_id": "cn_ss_03",
-          "subtype": "single_session",
-          "pass": true,
-          "latency_ms": 11840.1,
-          "top_3": [
-            "user owns_headphones 耳机",
-            "我的初代 iPhone 是高三那年买的 4S",
-            "刚收到快递, 是上周买的耳机"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户的第一部 iPhone 是哪个型号",
-          "expected_answer": "iPhone 4S"
-        },
-        {
-          "question_id": "cn_ss_04",
-          "subtype": "single_session",
-          "pass": true,
-          "latency_ms": 15499.8,
-          "top_3": [
-            "我大学时主修计算机, 辅修了心理学",
-            "user major 计算机",
-            "user minor 心理学"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户大学辅修什么专业",
-          "expected_answer": "心理学"
-        },
-        {
-          "question_id": "cn_ss_05",
-          "subtype": "single_session",
-          "pass": true,
-          "latency_ms": 24446.9,
-          "top_3": [
-            "user pet_breed 柯基",
-            "user pet_age 5岁",
-            "user has_pet 旺财"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户养的是什么品种的狗",
-          "expected_answer": "柯基"
-        },
-        {
-          "question_id": "cn_ss_06",
-          "subtype": "single_session",
-          "pass": true,
-          "latency_ms": 4610.9,
-          "top_3": [
-            "我去年生日是在京都过的, 还看到了樱花",
-            "明天有个产品评审会",
-            "公司楼下新开了一家咖啡店"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户上个生日在哪里过的",
-          "expected_answer": "京都"
-        },
-        {
-          "question_id": "cn_ss_07",
-          "subtype": "single_session",
-          "pass": true,
-          "latency_ms": 7539.5,
-          "top_3": [
-            "user uses_lens 35mm 定焦镜头",
-            "user uses_camera 富士 X-T5",
-            "我现在用的相机是富士 X-T5, 配 35mm 定焦镜头"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户当前用的相机是哪款",
-          "expected_answer": "富士 X-T5"
-        },
-        {
-          "question_id": "cn_ss_08",
-          "subtype": "single_session",
-          "pass": true,
-          "latency_ms": 4841.2,
-          "top_3": [
-            "user allergic_to 青霉素",
-            "我对青霉素过敏, 每次去医院都要特别告知",
-            "听说下周要降温"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户对什么药物过敏",
-          "expected_answer": "青霉素"
-        },
-        {
-          "question_id": "cn_ss_09",
-          "subtype": "single_session",
-          "pass": true,
-          "latency_ms": 11186.4,
-          "top_3": [
-            "user works_at 杭州滨江区的一家 AI 创业公司",
-            "user occupation 算法工程师",
-            "我目前在杭州滨江区的一家 AI 创业公司做算法工程师"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户在哪个城市工作",
-          "expected_answer": "杭州"
-        },
-        {
-          "question_id": "cn_ss_10",
-          "subtype": "single_session",
-          "pass": true,
-          "latency_ms": 25529.8,
-          "top_3": [
-            "user spouse_occupation 产品经理",
-            "user spouse_works_at 阿里",
-            "user married_to 林晓"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户配偶的职业是什么",
-          "expected_answer": "产品经理"
-        },
-        {
-          "question_id": "cn_ms_01",
-          "subtype": "multi_session",
-          "pass": true,
-          "latency_ms": 18650.8,
-          "top_3": [
-            "user booked_flight_to 日本",
-            "user flight_date 5 月 12 号下午",
-            "user booked_hotel_in 大阪心斋桥附近"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户什么时候出发去日本",
-          "expected_answer": "5 月 12 号"
-        },
-        {
-          "question_id": "cn_ms_02",
-          "subtype": "multi_session",
-          "pass": true,
-          "latency_ms": 7706.6,
-          "top_3": [
-            "user hobby 吉他",
-            "user practices 民谣指弹",
-            "我最近在学吉他"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户在学什么乐器",
-          "expected_answer": "吉他"
-        },
-        {
-          "question_id": "cn_ms_03",
-          "subtype": "multi_session",
-          "pass": true,
-          "latency_ms": 9888.5,
-          "top_3": [
-            "user gym_frequency 每周三次",
-            "目标是从 75 公斤降到 65 公斤",
-            "我打算今年减肥"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户的目标体重是多少",
-          "expected_answer": "65 公斤"
-        },
-        {
-          "question_id": "cn_ms_04",
-          "subtype": "multi_session",
-          "pass": true,
-          "latency_ms": 9395.2,
-          "top_3": [
-            "user target 清华大学计算机系",
-            "我打算考研",
-            "目标是清华的计算机系"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户考研的目标学校是哪所",
-          "expected_answer": "清华"
-        },
-        {
-          "question_id": "cn_ms_05",
-          "subtype": "multi_session",
-          "pass": true,
-          "latency_ms": 16112.2,
-          "top_3": [
-            "user lives_in 海淀区",
-            "租了海淀区的一个一居室",
-            "user currently_watching 古装剧"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户租的房子在哪个区",
-          "expected_answer": "海淀"
-        },
-        {
-          "question_id": "cn_ms_06",
-          "subtype": "multi_session",
-          "pass": false,
-          "latency_ms": 30970.3,
-          "top_3": [
-            "user has_child 两个孩子",
-            "我家有两个孩子",
-            "user has_meeting 产品评审会"
-          ],
-          "checks": {
-            "contain": {
-              "pass": false,
-              "missing": [
-                "小宇"
-              ]
-            }
-          },
-          "question": "用户两个孩子的名字分别是什么",
-          "expected_answer": "小宇 小雯"
-        },
-        {
-          "question_id": "cn_ms_07",
-          "subtype": "multi_session",
-          "pass": true,
-          "latency_ms": 10682.6,
-          "top_3": [
-            "user chosen_wedding_dress Vera Wang",
-            "婚礼定在三亚的海边",
-            "婚纱已经选好了, 是 Vera Wang 的"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户的婚礼在哪里举办",
-          "expected_answer": "三亚"
-        },
-        {
-          "question_id": "cn_ms_08",
-          "subtype": "multi_session",
-          "pass": true,
-          "latency_ms": 14072.5,
-          "top_3": [
-            "显卡用的是 4090",
-            "user uses_cpu AMD 7950X",
-            "user graphics_card RTX 4090"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户打算配什么型号的显卡",
-          "expected_answer": "4090"
-        },
-        {
-          "question_id": "cn_ms_09",
-          "subtype": "multi_session",
-          "pass": true,
-          "latency_ms": 24805.4,
-          "top_3": [
-            "user occupation 创业者",
-            "user works_on AI 教育方向的产品",
-            "user team_all_technical true"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户创业的方向是什么",
-          "expected_answer": "AI 教育"
-        },
-        {
-          "question_id": "cn_ms_10",
-          "subtype": "multi_session",
-          "pass": true,
-          "latency_ms": 15688.7,
-          "top_3": [
-            "user monthly_payment 1.7万",
-            "user owns_house 上海",
-            "user loan_amount 300万"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户房子的总价是多少",
-          "expected_answer": "800 万"
-        },
-        {
-          "question_id": "cn_tr_01",
-          "subtype": "temporal_reasoning",
-          "pass": true,
-          "latency_ms": 15408.4,
-          "top_3": [
-            "user hobby 打羽毛球",
-            "我每周三晚上 7 点会去打羽毛球",
-            "通常打 2 小时"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户每周固定哪天打羽毛球",
-          "expected_answer": "周三"
-        },
-        {
-          "question_id": "cn_tr_02",
-          "subtype": "temporal_reasoning",
-          "pass": true,
-          "latency_ms": 12640.2,
-          "top_3": [
-            "user annual_health_checkup_month 11",
-            "我每年 11 月体检",
-            "明天有个产品评审会"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户什么月份体检",
-          "expected_answer": "11 月"
-        },
-        {
-          "question_id": "cn_tr_03",
-          "subtype": "temporal_reasoning",
-          "pass": true,
-          "latency_ms": 5804.5,
-          "top_3": [
-            "我上次出国是 2024 年 3 月去的泰国",
-            "下次准备明年春天去欧洲",
-            "刚收到快递, 是上周买的耳机"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户上次出国去了哪里",
-          "expected_answer": "泰国"
-        },
-        {
-          "question_id": "cn_tr_04",
-          "subtype": "temporal_reasoning",
-          "pass": true,
-          "latency_ms": 11103.3,
-          "top_3": [
-            "已经坚持 3 年了",
-            "user runs_daily_distance 5公里",
-            "user wakes_up_at 06:00"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户坚持晨跑多少年了",
-          "expected_answer": "3 年"
-        },
-        {
-          "question_id": "cn_tr_05",
-          "subtype": "temporal_reasoning",
-          "pass": true,
-          "latency_ms": 7389.4,
-          "top_3": [
-            "user hometown 武汉",
-            "我今年春节是在老家武汉过的",
-            "公司楼下新开了一家咖啡店"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            }
-          },
-          "question": "用户春节去了哪个城市",
-          "expected_answer": "武汉"
-        },
-        {
-          "question_id": "cn_ku_01",
-          "subtype": "knowledge_update",
-          "pass": true,
-          "latency_ms": 14808.7,
-          "top_3": [
-            "user works_at 字节",
-            "user occupation 基础架构",
-            "公司楼下新开了一家咖啡店"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            },
-            "not_contain": {
-              "pass": true,
-              "violated": []
-            }
-          },
-          "question": "用户目前在哪家公司",
-          "expected_answer": "字节"
-        },
-        {
-          "question_id": "cn_ku_02",
-          "subtype": "knowledge_update",
-          "pass": false,
-          "latency_ms": 8152.4,
-          "top_3": [
-            "user girlfriend 小雪",
-            "我女朋友叫小雪",
-            "公司楼下新开了一家咖啡店"
-          ],
-          "checks": {
-            "contain": {
-              "pass": false,
-              "missing": [
-                "莉莉"
-              ]
-            },
-            "not_contain": {
-              "pass": false,
-              "violated": [
-                "小雪"
-              ]
-            }
-          },
-          "question": "用户现在的女朋友叫什么",
-          "expected_answer": "莉莉"
-        },
-        {
-          "question_id": "cn_ku_03",
-          "subtype": "knowledge_update",
-          "pass": true,
-          "latency_ms": 7791.0,
-          "top_3": [
-            "user owns_car 特斯拉 Model Y",
-            "上个月换了车, 现在开特斯拉 Model Y",
-            "公司楼下新开了一家咖啡店"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            },
-            "not_contain": {
-              "pass": true,
-              "violated": []
-            }
-          },
-          "question": "用户现在开什么车",
-          "expected_answer": "特斯拉 Model Y"
-        },
-        {
-          "question_id": "cn_ku_04",
-          "subtype": "knowledge_update",
-          "pass": true,
-          "latency_ms": 9816.6,
-          "top_3": [
-            "user weight_kg 70",
-            "经过半年健身, 现在 70 公斤了",
-            "明天有个产品评审会"
-          ],
-          "checks": {
-            "contain": {
-              "pass": true,
-              "missing": []
-            },
-            "not_contain": {
-              "pass": true,
-              "violated": []
-            }
-          },
-          "question": "用户当前体重是多少",
-          "expected_answer": "70 公斤"
-        },
-        {
-          "question_id": "cn_ku_05",
-          "subtype": "knowledge_update",
-          "pass": false,
-          "latency_ms": 12217.4,
-          "top_3": [
-            "user owns_phone iPhone 14",
-            "我手机是 iPhone 14",
-            "新闻里说股市又跌了"
-          ],
-          "checks": {
-            "contain": {
-              "pass": false,
-              "missing": [
-                "iPhone 16"
-              ]
-            },
-            "not_contain": {
-              "pass": false,
-              "violated": [
-                "iPhone 14"
-              ]
-            }
-          },
-          "question": "用户当前用什么手机",
-          "expected_answer": "iPhone 16 Pro"
         }
       ]
     }

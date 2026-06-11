@@ -59,11 +59,16 @@ def compute_graph_proximity(
 
 
 def compute_importance(record: MemoryRecord) -> float:
-    """直接读 record.importance, 兼容 recall_count 加成."""
-    base = record.importance
-    # 召回越多次, 重要度微涨 (饱和函数, 上限不超过 1)
-    bonus = math.tanh(record.recall_count / 20.0) * 0.1
-    return min(1.0, base + bonus)
+    """重要度信号 — Phase 1 起改用 effective_strength (含 Ebbinghaus 衰减 +
+    复习提升 + 来源权重 + Staleness 软废弃).
+
+    Staleness 标记的旧记忆 effective_strength × 0.2, 召回时自动被压下去.
+    """
+    from app.lifecycle import compute_effective_strength
+
+    # effective_strength 范围 [0, ~1.5], 归一化到 [0, 1]
+    strength = compute_effective_strength(record)
+    return min(1.0, strength)
 
 
 def fuse_signals(

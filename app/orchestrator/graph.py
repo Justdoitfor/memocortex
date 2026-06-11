@@ -92,6 +92,10 @@ class MemoryOrchestrator:
             importance=req.importance if req.importance is not None else 0.5,
             tags=req.tags,
         )
+        # Phase 1: source_type 显式覆盖 (默认 explicit_statement, 上游 Agent
+        # 可标 corrected / inferred / agent_confirmed 等影响 effective_strength)
+        if req.source_type:
+            record.source_type = req.source_type
 
         arbitration = None
 

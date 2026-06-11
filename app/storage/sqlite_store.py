@@ -48,6 +48,13 @@ class MemoryORM(Base):
     content: Mapped[str] = mapped_column(Text)
     structured: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     importance: Mapped[float] = mapped_column(Float, default=0.5)
+    # Phase 1: 置信度生命周期
+    confidence_score: Mapped[float] = mapped_column(Float, default=0.7)
+    source_type: Mapped[str] = mapped_column(String(30), default="explicit_statement", index=True)
+    staleness_signal: Mapped[bool] = mapped_column(Integer, default=0)  # SQLite 用 INT
+    superseded_by: Mapped[str | None] = mapped_column(String(40), nullable=True, index=True)
+    decay_rate: Mapped[float] = mapped_column(Float, default=0.01)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, index=True)
     last_recalled_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     recall_count: Mapped[int] = mapped_column(Integer, default=0)
@@ -105,6 +112,11 @@ def _orm_to_record(o: MemoryORM) -> MemoryRecord:
         content=o.content,
         structured=o.structured or {},
         importance=o.importance,
+        confidence_score=o.confidence_score,
+        source_type=o.source_type,
+        staleness_signal=bool(o.staleness_signal),
+        superseded_by=o.superseded_by,
+        decay_rate=o.decay_rate,
         created_at=o.created_at,
         last_recalled_at=o.last_recalled_at,
         recall_count=o.recall_count,
@@ -125,6 +137,11 @@ def _record_to_orm(r: MemoryRecord) -> MemoryORM:
         content=r.content,
         structured=r.structured,
         importance=r.importance,
+        confidence_score=r.confidence_score,
+        source_type=r.source_type,
+        staleness_signal=1 if r.staleness_signal else 0,
+        superseded_by=r.superseded_by,
+        decay_rate=r.decay_rate,
         created_at=r.created_at,
         last_recalled_at=r.last_recalled_at,
         recall_count=r.recall_count,

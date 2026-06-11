@@ -194,13 +194,17 @@ class SemanticMemory:
         user_id: str,
         text: str,
         source_memory_id: str | None = None,
+        conflict_strategy: str = "arbitrator",
     ) -> list[dict[str, Any]]:
         """从自然语言抽取 + 写入. 返回每个 triple 的写入结果 (含 arbitration 决策).
+
+        Args:
+            conflict_strategy: arbitrator (LLM 决策, 默认) / staleness (软废弃) / auto
 
         每个返回元素结构:
           {
             "triple": Triple,
-            "action": "added" | "replaced" | "merged" | "versioned" | "ignored",
+            "action": "added" | "replaced" | "merged" | "versioned" | "ignored" | "stale_marked",
             "arbitration": ArbitrationDecision | None,
           }
         """
@@ -211,12 +215,24 @@ class SemanticMemory:
         results: list[dict[str, Any]] = []
         for triple in triples:
             triple.source_memory_id = source_memory_id
-            res = await self.upsert_triple(user_id, triple)
+            res = await self.upsert_triple(user_id, triple, conflict_strategy=conflict_strategy)
             results.append(res)
         return results
 
-    async def upsert_triple(self, user_id: str, triple: Triple) -> dict[str, Any]:
-        """写入单个 triple, 触发冲突检测 + 仲裁."""
+    async def upsert_triple(
+        self,
+        user_id: str,
+        triple: Triple,
+        conflict_strategy: str = "arbitrator",
+    ) -> dict[str, Any]:
+        """写入单个 triple, 触发冲突检测 + 仲裁.
+
+        Args:
+            conflict_strategy:
+                arbitrator (默认) — LLM 决策 REPLACE/MERGE/VERSIONED/IGNORE
+                staleness — 直接软废弃旧 triple (跳过 LLM, 适合无 Key / 批量写)
+                auto — LLM 失败时自动 fallback 到 staleness
+        """
         # 检查冲突: 同 (subject, predicate) 已有 triple?
         existing = await self._kg.find_triples(
             user_id, subject=triple.subject, predicate=triple.predicate
@@ -235,6 +251,10 @@ class SemanticMemory:
                 logger.debug(f"Semantic upsert: 重复事实, 忽略 ({triple})")
                 return {"triple": triple, "action": "duplicate", "arbitration": None}
 
+        # ── Phase 1: 业务方显式选 staleness 策略 → 跳过 LLM, 直接软废弃 ──
+        if conflict_strategy == "staleness":
+            return await self._apply_staleness(user_id, triple, existing)
+
         # 有冲突 → 调 Arbitrator
         if self._arbitrator is None:
             # 降级: 没注入 arbitrator 时用字段语义启发式
@@ -244,7 +264,9 @@ class SemanticMemory:
                 await self._mirror_to_vector(user_id, triple)
                 return {"triple": triple, "action": "merged_heuristic", "arbitration": None}
             else:
-                # unique → 替换
+                # unique → 替换 (或软废弃)
+                if conflict_strategy == "auto":
+                    return await self._apply_staleness(user_id, triple, existing)
                 for t in existing:
                     await self._kg.delete_triple(user_id, t.id)
                 await self._kg.add_triple(user_id, triple)
@@ -252,14 +274,84 @@ class SemanticMemory:
                 return {"triple": triple, "action": "replaced_heuristic", "arbitration": None}
 
         # 走 Arbitrator
-        decision = await self._arbitrator.arbitrate(
+        try:
+            decision = await self._arbitrator.arbitrate(
+                user_id=user_id,
+                new_triple=triple,
+                existing_triples=existing,
+                field_semantics=get_field_semantics(triple.predicate),
+            )
+            action_str = await self._apply_decision(user_id, triple, existing, decision)
+            return {"triple": triple, "action": action_str, "arbitration": decision}
+        except Exception as e:
+            logger.warning(f"Arbitrator 失败 ({e}), conflict_strategy={conflict_strategy}")
+            if conflict_strategy == "auto":
+                return await self._apply_staleness(user_id, triple, existing)
+            raise
+
+    async def _apply_staleness(
+        self,
+        user_id: str,
+        new_triple: Triple,
+        existing: list[Triple],
+    ) -> dict[str, Any]:
+        """Staleness 路径: 旧 triple 不删, 但标 staleness → effective_strength × 0.2.
+
+        新 triple 正常入库. 旧 episodic 不动 (审计可追溯).
+        """
+        from datetime import datetime
+
+        from app.lifecycle.staleness import apply_staleness
+
+        # 1. 新 triple 添加到 KG + 镜像 Chroma
+        await self._kg.add_triple(user_id, new_triple)
+        await self._mirror_to_vector(user_id, new_triple)
+
+        # 2. 把所有旧 triple 关联的 source memory 一起软废弃
+        meta = get_metadata()
+        old_records: list[MemoryRecord] = []
+        for old_t in existing:
+            if not old_t.source_memory_id:
+                continue
+            old_rec = await meta.get_memory(old_t.source_memory_id)
+            if old_rec:
+                old_records.append(old_rec)
+
+        # 3. 同时给旧 triple 自己 ("镜像在 Chroma 的 triple-mirror") 也降权
+        #    旧 KG triple 不直接删除, 只在 Chroma metadata 标 staleness
+        from app.storage import get_vector_store
+        vec = get_vector_store()
+        for old_t in existing:
+            try:
+                await vec.update_metadata(
+                    old_t.id, user_id,
+                    {"staleness_signal": 1, "superseded_by": new_triple.id},
+                )
+            except Exception:
+                pass
+
+        # 4. 创建新的 source record (CORRECTED 来源) 并软废弃旧 episodic
+        new_record = MemoryRecord(
+            id=new_triple.id,
             user_id=user_id,
-            new_triple=triple,
-            existing_triples=existing,
-            field_semantics=get_field_semantics(triple.predicate),
+            type=MemoryType.SEMANTIC,
+            content=f"{new_triple.subject} {new_triple.predicate} {new_triple.object}",
+            source_type="corrected",
+            confidence_score=0.85,
+            created_at=datetime.now(),
         )
-        action_str = await self._apply_decision(user_id, triple, existing, decision)
-        return {"triple": triple, "action": action_str, "arbitration": decision}
+        result = await apply_staleness(new_record, old_records)
+        logger.info(
+            f"[Staleness] Semantic 软废弃: 新 {new_triple.object}, 旧软废弃 "
+            f"{len(result['superseded'])} 条 source memory"
+        )
+
+        return {
+            "triple": new_triple,
+            "action": "stale_marked",
+            "arbitration": None,
+            "superseded": result["superseded"],
+        }
 
     async def _apply_decision(
         self,
