@@ -1,32 +1,112 @@
 # MemoCortex
 
-> **Agent-agnostic 长期记忆中间件** — 5 类分层记忆 / 4 信号 Hybrid Recall / LLM-as-Arbitrator 冲突消解
+> **MCP-Native Long-Term Memory Infrastructure** — 5 类长期分层记忆 / 4 信号 Hybrid Recall / LLM-as-Arbitrator + Staleness Detection 双策略 / 隐式行为模式挖掘
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-green.svg)](https://fastapi.tiangolo.com/)
 [![LangGraph](https://img.shields.io/badge/LangGraph-0.2+-orange.svg)](https://github.com/langchain-ai/langgraph)
 [![MCP](https://img.shields.io/badge/MCP-fastmcp%202.14+-purple.svg)](https://modelcontextprotocol.io/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+> 🌐 **Live Demo**: 部署后填 `https://memocortex.vercel.app`
+> 📦 **GitHub**: https://github.com/Justdoitfor/memocortex
+> 📖 **Claude Desktop 一键接入**: 见 [§ MCP 集成](#-mcp-集成-claude-desktop--cursor--cline)
 
 ---
 
 ## 解决什么问题
 
-2026 年 Agent 落地最大的瓶颈不再是模型能力,而是**长期记忆**。MemoCortex 与现有方案的差异:
+2026 年 Agent 落地最大的瓶颈不再是模型能力, 而是 **长期记忆系统**. mem0 官方 *State of AI Agent Memory 2026* 报告点名 5 个 open problem:
 
-| 现状方案 | 局限 |
-|----------|------|
-| LangChain `ConversationSummaryMemory` | 摘要损失大,跨 session 几乎全丢 |
-| mem0 v2.0.x (2026-04) — 已支持 Hybrid Retrieval + entity linking | 仍是 2 类扁平记忆;走 ADD-only + 召回 rerank 路线,对"用户搬家、换工作"这类**确定性事实变更不主动收敛**(旧事实留库靠 rank 压下去);无 MCP 协议接入 |
-| Zep | 强在时序检索,弱在多框架接入与冲突主动消解 |
-| Letta (原 MemGPT) | 单 Agent OS 风格,**不是中间件** |
+| Open Problem | 行业现状 | MemoCortex 方案 |
+|--------------|---------|----------------|
+| **记忆陈旧性** (高置信度记忆事实过期后仍被高频召回) | mem0 v3 选 ADD-only, 旧事实留库靠 rank 压 | **Staleness Detection** — Ebbinghaus 公式 + 软废弃罚分 × 0.2 + 完整审计可回滚 |
+| **隐式偏好学习** (用户从未明说但行为体现) | 仅 Honcho 在做, 方案黑盒 | **Pattern Miner** — 6 类行为信号 + 周期 LLM 归纳为 Implicit Memory |
+| **跨会话身份归因** | 各方案普遍混淆 inferred / explicit | **source_type** 6 类 + 影响 effective_strength 计算 |
+| **程序性记忆工具链** | 概念支持, 工具空白 | **Procedural Memory** + 专用 MCP `recall_workflow` 工具 |
+| **MCP 生态原生集成** | 都是事后 wrapper | **8 个动词驱动 MCP Tools + 3 个 Resources** (一等公民) |
 
-**MemoCortex 把"记忆"当成一个分布式基础设施来做**, 而不是某个 Agent 的内部模块:
-- **5 类分层记忆** (借鉴 Tulving 1985 认知科学分类), 信息按性质分流, 比 mem0 v2 的 2 类 + entity 多 3 个语义维度
-- **4 信号 Hybrid Recall** (向量 + **时间衰减** + 图扩展 + **重要度评分**), 比 mem0 v2 的 3 信号(语义 + BM25 + entity)多了"时间衰减"和"重要度"两个 mem0 没有的维度
-- **LLM-as-Arbitrator 自动冲突消解** (REPLACE/MERGE/VERSIONED/IGNORE 4 种 action + 完整审计日志) — **与 mem0 v2 的 ADD-only 路线分歧**,选择"写入时主动消解、可回滚可审计"
-- **MCP Server** (5 个工具) — mem0/Zep/Letta 都没做
-- **Reflective Memory 用户画像** — 后台 Worker 周期刷新,作为"人物简介"注入 SystemPrompt
-- **多框架 Adapter** (LangChain 已实现 + AutoGen/CrewAI stub) — 一次开发覆盖全 Agent 生态
+**MemoCortex 是 MCP 一等公民的长期记忆基础设施**, REST/SDK 为附加协议. 上游 Agent 框架 (LangChain/AutoGen/CrewAI) 通过 MCP 零侵入接入.
+
+---
+
+## 5 类长期分层记忆 (5 + 1)
+
+| 类型 | 定位 | 来源 | 何时被召回 |
+|------|------|------|-----------|
+| **Episodic** | 时序事件 | 业务方写入 (默认) | 显式 search 或新对话开头 |
+| **Semantic** | 事实知识 (KG triple) | LLM 抽取 + 冲突仲裁 | 每轮按实体匹配注入 |
+| **Procedural** | 任务模板 + 步骤 | 业务方写入 (含 structured.steps) | Agent 决策"我以前怎么做"时 |
+| **Reflective** | 显式用户画像 | Worker 从 Semantic 周期聚合 (不可手动写) | 每轮注入 SystemPrompt |
+| **Implicit** | 隐式偏好 | **Pattern Miner 从行为信号挖掘** (不可手动写) | 高置信场景注入 |
+| ~~Working~~ | 短期会话上下文 | **内部缓冲, 不对外暴露** (那是 LangGraph state 的职责) | — |
+
+> 理论根基: Tulving 1985 long-term memory 三分类 (Episodic/Semantic/Procedural) + 自研 Reflective (Worker 聚合) + 自研 Implicit (Honcho 风格 pattern mining).
+
+---
+
+## 4 信号 Hybrid Recall
+
+```
+final_score = w1·vector_sim       # 向量召回 (语义相似)
+            + w2·temporal_decay   # 时间衰减 (exp(-Δt/τ), τ=30 天)
+            + w3·bm25_score       # SQLite FTS5 BM25 (字面 / 罕见词命中)
+            + w4·importance       # effective_strength (含 staleness × 0.2 软废弃)
+
+权重默认 0.40 / 0.20 / 0.20 / 0.20, 可热配置.
+```
+
+**effective_strength 公式** (Phase 1, MemoryMesh §5.1):
+```
+effective_strength(t) = confidence_score
+                       × e^(-decay_rate × active_days)        # Ebbinghaus
+                       × (1 + 0.15 × log(recall_count + 1))   # 复习提升
+                       × SOURCE_WEIGHTS[source_type]           # 来源权重
+                       × (0.2 if staleness_signal else 1.0)    # 软废弃罚分
+```
+
+实测分数:
+- 新写入的 explicit_statement: **1.000**
+- 30 天未召回: **0.741** (e^(-0.3))
+- 高频召回 50 次: **1.590** (复习提升)
+- 软废弃: **0.200**
+- 用户主动纠正 (corrected): **1.200**
+
+---
+
+## 🌐 MCP 集成 (Claude Desktop / Cursor / Cline)
+
+**Claude Desktop 配置** (`~/Library/Application Support/Claude/claude_desktop_config.json` macOS, `%APPDATA%\Claude\claude_desktop_config.json` Windows):
+
+```json
+{
+  "mcpServers": {
+    "memocortex": {
+      "url": "http://127.0.0.1:8766/mcp",
+      "transport": "streamable-http"
+    }
+  }
+}
+```
+
+**8 个动词驱动 MCP Tools** (`uv run python -m mcp_server.server` 启动):
+
+| Tool | 描述 |
+|------|------|
+| `remember` | 写入长期记忆 (episodic/semantic/procedural) |
+| `recall` | 4 信号 Hybrid Recall (含 vector_sim ≥ 0.55 阈值过滤) |
+| `recall_workflow` | 检索 Procedural Memory, 返回结构化步骤 |
+| `get_profile` | 获取 Reflective Memory 用户画像 |
+| `track_signal` | 上报 6 类行为信号 (Phase 2 Pattern Miner) |
+| `reflect` | 手动触发 Pattern Miner 挖掘 Implicit |
+| `manage_memory` | list / forget / mark_stale 统一管理 |
+| `list_arbitrations` | 查询冲突仲裁审计日志 |
+
+**3 个 MCP Resources** (Agent SystemPrompt 注入):
+- `memory://summary/{user_id}` — 核心 Semantic 摘要
+- `memory://profile/{user_id}` — 用户画像 Markdown
+- `memory://workflows/{user_id}` — 所有 Procedural 索引
+
 
 ---
 
@@ -257,6 +337,53 @@ memocortex/
 | MCP | fastmcp + langchain-mcp-adapters | 不变 |
 
 **所有 MVP 简化项都通过 Protocol 抽象**, 业务代码只依赖 `app/storage/base.py` 的接口, 生产替换不动业务代码。
+
+---
+
+## 部署 (Phase 4)
+
+### 本地一键跑
+
+```bash
+# 后端
+make api          # → http://localhost:8765 (REST + Swagger)
+make mcp          # → http://localhost:8766/mcp (MCP Server)
+
+# 前端
+cd web && npm install && npm run build && cd out && python -m http.server 3000
+# → http://localhost:3000
+```
+
+### Vercel + Render 一键上线 (公网 Demo)
+
+**前端 (Vercel)** — `web/` 子目录已配置 `vercel.json`:
+```bash
+# 1. 把仓库连到 Vercel (https://vercel.com/new)
+# 2. Root Directory 选 `web/`, 自动识别 Next.js + vercel.json
+# 3. 在 Vercel 项目 Settings → Environment Variables 加:
+#    NEXT_PUBLIC_API_BASE=https://memocortex-api.onrender.com
+# 4. Deploy → 拿到 https://memocortex.vercel.app
+```
+
+**后端 (Render)** — 根目录已配置 `Dockerfile` + `render.yaml`:
+```bash
+# 1. https://dashboard.render.com → New + → Blueprint → 选 memocortex 仓库
+# 2. Render 自动识别 render.yaml, 创建 web service
+# 3. 在 Render dashboard 设置 Environment:
+#    MEMOCORTEX_LLM_API_KEY = sk-xxx  (DeepSeek/OpenAI 兼容 key)
+# 4. Deploy → 拿到 https://memocortex-api.onrender.com
+# 5. 把这个 URL 回填到 Vercel 前端的 NEXT_PUBLIC_API_BASE
+```
+
+### Docker 自托管
+
+```bash
+docker build -t memocortex:latest .
+docker run -p 8765:8765 \
+  -e MEMOCORTEX_LLM_API_KEY=sk-xxx \
+  -v $(pwd)/data:/data \
+  memocortex:latest
+```
 
 ---
 
