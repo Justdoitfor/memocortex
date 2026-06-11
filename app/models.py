@@ -219,6 +219,44 @@ class RecallResult(BaseModel):
 # ╚══════════════════════════════════════════════════════════════════════╝
 
 
+# ╔══════════════════════════════════════════════════════════════════════╗
+# ║                  Phase 2: 隐式行为模式挖掘                            ║
+# ╚══════════════════════════════════════════════════════════════════════╝
+
+
+class SignalType(str, Enum):  # noqa: UP042
+    """6 种用户行为信号 — Pattern Miner 聚合后挖掘为 Implicit Memory.
+
+    参考 MemoryMesh §5.3, Honcho dialectic pattern inference.
+    """
+
+    REGENERATE_REQUEST = "regenerate_request"    # 用户要求重新生成
+    EXPLICIT_CORRECTION = "explicit_correction"  # 用户明确纠正
+    FORMAT_PREFERENCE = "format_preference"      # 用户改变了格式要求
+    TOOL_SELECTION = "tool_selection"            # 用户选择了哪个 Tool 的结果
+    POSITIVE_FEEDBACK = "positive_feedback"      # 用户表示满意
+    TOPIC_PIVOT = "topic_pivot"                  # 用户中途转换话题
+
+
+class BehaviorSignal(BaseModel):
+    """单条行为信号 — Agent 在用户产生上述行为时主动通过 MCP track_signal 上报."""
+
+    id: str | None = None
+    user_id: str
+    session_id: str | None = None
+    signal_type: SignalType
+    context_tags: list[str] = Field(
+        default_factory=list,
+        description="当时的上下文标签 (e.g. ['code_review', 'python'])"
+    )
+    memory_ids_in_context: list[str] = Field(
+        default_factory=list,
+        description="本次召回用了哪些记忆"
+    )
+    extra: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=datetime.now)
+
+
 class WriteRequest(BaseModel):
     user_id: str
     content: str

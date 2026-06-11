@@ -24,6 +24,7 @@ const TABS = [
   { href: "/", label: "概览" },
   { href: "/playground", label: "Playground" },
   { href: "/conflict", label: "冲突仲裁" },
+  { href: "/patterns", label: "Pattern Miner" },
   { href: "/eval", label: "Eval 跑分" },
   { href: "/arch", label: "架构 & 接入" },
 ];

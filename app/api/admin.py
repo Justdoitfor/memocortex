@@ -20,6 +20,29 @@ async def trigger_reflection(user_id: str) -> dict:
     return await run_all_for_user(user_id)
 
 
+@router.post("/mine_patterns/{user_id}", summary="手动触发 Pattern Miner (Phase 2)")
+async def mine_patterns(user_id: str, window_days: int = 14) -> dict:
+    """从最近 window_days 天的 behavior_signals 挖掘 Implicit Memory.
+
+    通常由后台 Cron 自动触发 (每 N 次会话或每天). 此接口用于:
+      - Demo 演示: 写 5 条 signal 后立刻看到 Implicit 生成
+      - 调试: 不等 Cron 立刻挖掘
+    """
+    from app.pattern import mine_patterns_for_user
+    new_records = await mine_patterns_for_user(user_id, window_days=window_days)
+    return {
+        "user_id": user_id,
+        "window_days": window_days,
+        "new_implicit_count": len(new_records),
+        "new_records": [
+            {"id": r.id, "content": r.content, "confidence": r.confidence_score,
+             "keywords": r.structured.get("keywords", []),
+             "evidence_count": r.structured.get("evidence_count")}
+            for r in new_records
+        ],
+    }
+
+
 @router.get("/arbitrations/{user_id}", summary="查询冲突仲裁审计日志")
 async def list_arbitrations(user_id: str, limit: int = 50) -> dict:
     meta = get_metadata()

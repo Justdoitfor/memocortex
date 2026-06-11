@@ -85,6 +85,7 @@ class Settings(BaseSettings):
     reflect_merge_interval_sec: int = 7200
     reflect_decay_interval_sec: int = 3600
     reflect_profile_interval_sec: int = 86400
+    pattern_mine_interval_sec: int = 1800  # Phase 2: 30 min 扫一次 Pattern Miner
 
     # ── 调试 ──────────────────────────────────────────────────────────
     debug: bool = False

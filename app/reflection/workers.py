@@ -163,6 +163,42 @@ async def refresh_reflective_profile(user_id: str) -> dict[str, Any]:
     return {"user_id": user_id, "profile": profile}
 
 
+async def _mine_all_users() -> None:
+    """Phase 2: 扫所有有 signals 的用户并跑 Pattern Miner.
+
+    MVP 实现: 从 behavior_signals 表里取所有 distinct user_id, 逐个挖.
+    生产应只挖近 N 天有信号的活跃 user.
+    """
+    from app.pattern import mine_patterns_for_user
+    from app.storage import get_metadata
+    import sqlite3
+    from pathlib import Path
+
+    # 简化: 直接读 SQLite 取活跃用户
+    db_path = Path(config.sqlite_path)
+    if not db_path.exists():
+        return
+    try:
+        conn = sqlite3.connect(db_path)
+        users = [r[0] for r in conn.execute(
+            "SELECT DISTINCT user_id FROM behavior_signals "
+            "WHERE created_at > datetime('now', '-14 days')"
+        )]
+        conn.close()
+    except Exception as e:
+        logger.warning(f"[PatternMiner cron] 拉取活跃 user 失败: {e}")
+        return
+
+    if not users:
+        return
+    logger.info(f"[PatternMiner cron] 开始挖掘 {len(users)} 个活跃用户的隐式模式")
+    for uid in users:
+        try:
+            await mine_patterns_for_user(uid)
+        except Exception as e:
+            logger.warning(f"[PatternMiner cron] user={uid} 失败: {e}")
+
+
 # ╔══════════════════════════════════════════════════════════════════════╗
 # ║                         Scheduler 控制                                ║
 # ╚══════════════════════════════════════════════════════════════════════╝
@@ -197,10 +233,18 @@ def start_scheduler() -> AsyncIOScheduler:
         seconds=config.reflect_decay_interval_sec,
         id="decay",
     )
+    # Phase 2: Pattern Miner — 跨所有用户每 30 分钟扫一遍 (MVP 简化, 生产应只挖活跃 user)
+    _scheduler.add_job(
+        _mine_all_users,
+        "interval",
+        seconds=config.pattern_mine_interval_sec,
+        id="pattern_mine",
+    )
     _scheduler.start()
     logger.info(
         f"Reflection scheduler 启动: distill={config.reflect_distill_interval_sec}s "
-        f"merge={config.reflect_merge_interval_sec}s decay={config.reflect_decay_interval_sec}s"
+        f"merge={config.reflect_merge_interval_sec}s decay={config.reflect_decay_interval_sec}s "
+        f"pattern_mine={config.pattern_mine_interval_sec}s"
     )
     return _scheduler
 

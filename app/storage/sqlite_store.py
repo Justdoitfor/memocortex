@@ -98,6 +98,21 @@ class EvalRunORM(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, index=True)
 
 
+class BehaviorSignalORM(Base):
+    """Phase 2: 行为信号原始记录, Pattern Miner 聚合后挖掘为 Implicit Memory."""
+
+    __tablename__ = "behavior_signals"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[str] = mapped_column(String(120), index=True)
+    session_id: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    signal_type: Mapped[str] = mapped_column(String(40), index=True)
+    context_tags: Mapped[str] = mapped_column(String(500), default="")  # CSV
+    memory_ids_in_context: Mapped[str] = mapped_column(String(500), default="")  # CSV
+    extra: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now, index=True)
+
+
 # ╔══════════════════════════════════════════════════════════════════════╗
 # ║                      Helpers: ORM ↔ Pydantic                         ║
 # ╚══════════════════════════════════════════════════════════════════════╝
@@ -334,3 +349,63 @@ class SQLiteMetadataStore:
                 }
                 for o in result.scalars().all()
             ]
+
+    # ── Behavior Signals (Phase 2) ─────────────────────────────────────
+    async def add_signal(
+        self,
+        user_id: str,
+        signal_type: str,
+        context_tags: list[str] | None = None,
+        memory_ids_in_context: list[str] | None = None,
+        session_id: str | None = None,
+        extra: dict[str, Any] | None = None,
+    ) -> int:
+        async with self._sessionmaker() as session:
+            row = BehaviorSignalORM(
+                user_id=user_id,
+                session_id=session_id,
+                signal_type=signal_type,
+                context_tags=",".join(context_tags or []),
+                memory_ids_in_context=",".join(memory_ids_in_context or []),
+                extra=extra or {},
+            )
+            session.add(row)
+            await session.commit()
+            await session.refresh(row)
+            return row.id
+
+    async def list_signals(
+        self,
+        user_id: str,
+        signal_type: str | None = None,
+        since: datetime | None = None,
+        limit: int = 200,
+    ) -> list[dict[str, Any]]:
+        async with self._sessionmaker() as session:
+            stmt = select(BehaviorSignalORM).where(BehaviorSignalORM.user_id == user_id)
+            if signal_type:
+                stmt = stmt.where(BehaviorSignalORM.signal_type == signal_type)
+            if since:
+                stmt = stmt.where(BehaviorSignalORM.created_at >= since)
+            stmt = stmt.order_by(BehaviorSignalORM.created_at.desc()).limit(limit)
+            result = await session.execute(stmt)
+            return [
+                {
+                    "id": o.id,
+                    "user_id": o.user_id,
+                    "session_id": o.session_id,
+                    "signal_type": o.signal_type,
+                    "context_tags": [t for t in (o.context_tags or "").split(",") if t],
+                    "memory_ids_in_context": [t for t in (o.memory_ids_in_context or "").split(",") if t],
+                    "extra": o.extra or {},
+                    "created_at": o.created_at.isoformat(),
+                }
+                for o in result.scalars().all()
+            ]
+
+    async def count_signals(self, user_id: str) -> int:
+        async with self._sessionmaker() as session:
+            stmt = select(BehaviorSignalORM).where(BehaviorSignalORM.user_id == user_id)
+            result = await session.execute(stmt)
+            return len(list(result.scalars().all()))
+

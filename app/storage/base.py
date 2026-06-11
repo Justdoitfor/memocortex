@@ -134,6 +134,20 @@ class MetadataStore(Protocol):
     async def last_eval(self, suite: str) -> dict[str, Any] | None: ...
     async def list_eval_runs(self, suite: str, limit: int = 20) -> list[dict[str, Any]]: ...
 
+    # ── Behavior Signals (Phase 2) ──
+    async def add_signal(
+        self, user_id: str, signal_type: str,
+        context_tags: list[str] | None = None,
+        memory_ids_in_context: list[str] | None = None,
+        session_id: str | None = None,
+        extra: dict[str, Any] | None = None,
+    ) -> int: ...
+    async def list_signals(
+        self, user_id: str, signal_type: str | None = None,
+        since: datetime | None = None, limit: int = 200,
+    ) -> list[dict[str, Any]]: ...
+    async def count_signals(self, user_id: str) -> int: ...
+
 
 @runtime_checkable
 class ColdStorage(Protocol):

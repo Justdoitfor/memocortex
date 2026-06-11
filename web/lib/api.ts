@@ -161,6 +161,66 @@ export async function getArbitrations(user_id: string, limit = 50) {
   );
 }
 
+// ── Signals & Pattern Miner (Phase 2) ───────────────────────────────
+export type SignalType =
+  | "regenerate_request"
+  | "explicit_correction"
+  | "format_preference"
+  | "tool_selection"
+  | "positive_feedback"
+  | "topic_pivot";
+
+export interface TrackSignalParams {
+  user_id: string;
+  signal_type: SignalType;
+  context_tags?: string[];
+  memory_ids_in_context?: string[];
+  session_id?: string;
+  extra?: Record<string, unknown>;
+}
+
+export async function trackSignal(p: TrackSignalParams) {
+  return http<{ signal_id: number; status: string }>("/v1/signals/track", {
+    method: "POST",
+    body: JSON.stringify(p),
+  });
+}
+
+export async function listSignals(user_id: string, limit = 50) {
+  return http<{
+    user_id: string;
+    count: number;
+    items: Array<{
+      id: number;
+      signal_type: SignalType;
+      context_tags: string[];
+      memory_ids_in_context: string[];
+      session_id?: string;
+      extra: Record<string, unknown>;
+      created_at: string;
+    }>;
+  }>(`/v1/signals/${encodeURIComponent(user_id)}?limit=${limit}`);
+}
+
+export interface MinedImplicit {
+  id: string;
+  content: string;
+  confidence: number;
+  keywords: string[];
+  evidence_count: number;
+}
+
+export async function minePatterns(user_id: string, window_days = 14) {
+  return http<{
+    user_id: string;
+    window_days: number;
+    new_implicit_count: number;
+    new_records: MinedImplicit[];
+  }>(`/admin/mine_patterns/${encodeURIComponent(user_id)}?window_days=${window_days}`, {
+    method: "POST",
+  });
+}
+
 // ── SSE Eval Run ────────────────────────────────────────────────────
 /**
  * 用 EventSource 拿流式 eval 跑分.

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-11T13:54:37.605595",
+  "timestamp": "2026-06-11T18:40:37.932328",
   "suites": {
     "cn_scenarios": {
       "suite": "cn_scenarios",
@@ -11,7 +11,7 @@
           "id": "01",
           "name": "用户搬家 — 应 REPLACE",
           "pass": true,
-          "latency_ms": 36468.6,
+          "latency_ms": 35462.5,
           "top_3": [
             "user lives_in 上海浦东"
           ],
@@ -33,7 +33,7 @@
           "id": "02",
           "name": "过敏原合并 — 应 MERGE",
           "pass": true,
-          "latency_ms": 9760.9,
+          "latency_ms": 9093.0,
           "top_3": [
             "user allergic_to 芝麻",
             "user allergic_to 花生"
@@ -56,7 +56,7 @@
           "id": "03",
           "name": "职业变更 — 应 REPLACE",
           "pass": true,
-          "latency_ms": 16327.9,
+          "latency_ms": 14142.9,
           "top_3": [
             "user occupation AI 工程师",
             "user works_at 字节跳动"
@@ -80,7 +80,7 @@
           "id": "04",
           "name": "宠物多养 — 应 MERGE",
           "pass": true,
-          "latency_ms": 10928.7,
+          "latency_ms": 9241.0,
           "top_3": [
             "user has_pet 小白",
             "user has_pet 旺财"
@@ -103,7 +103,7 @@
           "id": "05",
           "name": "爱好新增 — 应 MERGE",
           "pass": true,
-          "latency_ms": 18084.6,
+          "latency_ms": 12452.2,
           "top_3": [
             "user likes 摄影",
             "user likes 爬山",
@@ -127,7 +127,7 @@
           "id": "06",
           "name": "矛盾事实 — 应 IGNORE 或 REPLACE 后者",
           "pass": true,
-          "latency_ms": 9622.5,
+          "latency_ms": 9903.1,
           "top_3": [
             "user age 30"
           ],
@@ -145,7 +145,7 @@
           "id": "07",
           "name": "多语言能力新增 — 应 MERGE",
           "pass": true,
-          "latency_ms": 30710.6,
+          "latency_ms": 15021.1,
           "top_3": [
             "user speaks_language 英语",
             "user speaks_language 日语",
@@ -170,7 +170,7 @@
           "id": "08",
           "name": "时间敏感 — 跨 session 长期记忆",
           "pass": true,
-          "latency_ms": 872.4,
+          "latency_ms": 882.6,
           "top_3": [
             "周二开始读《人类简史》, 已经读了 100 页",
             "上周一去看了《沙丘 3》, 视觉特效很震撼",
