@@ -25,7 +25,7 @@ export function ScoreBar({ signals, weights = DEFAULT_WEIGHTS }: ScoreBarProps) 
   const items = [
     { key: "vector" as const, label: "向量相似", val: signals.vector_sim, w: weights.vector },
     { key: "temporal" as const, label: "时间衰减", val: signals.temporal_decay, w: weights.temporal },
-    { key: "graph" as const, label: "图扩展", val: signals.graph_proximity, w: weights.graph },
+    { key: "graph" as const, label: "BM25", val: signals.graph_proximity, w: weights.graph },
     { key: "importance" as const, label: "重要度", val: signals.importance, w: weights.importance },
   ];
 

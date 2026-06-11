@@ -211,7 +211,7 @@ class MemoryOrchestrator:
         return SearchResponse(
             results=results,
             latency_ms=round(latency_ms, 2),
-            signals_used=["vector", "temporal", "graph", "importance"],
+            signals_used=["vector", "temporal", "bm25", "importance(effective_strength)"],
         )
 
     # ────────────────────────────────────────────────────────────────────

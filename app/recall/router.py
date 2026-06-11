@@ -82,25 +82,44 @@ class HybridRecallRouter:
                 top_k=top_k * _OVERSAMPLE,
             )
 
+            # 1b. BM25 召回 (Phase 3) — 并集补充字面匹配 (罕见词 / 实体名等)
+            bm25_map: dict[str, float] = {}
+            try:
+                from app.storage.fts_store import get_fts_store
+                fts = get_fts_store()
+                bm25_results = fts.search(
+                    user_id=user_id, query=query,
+                    memory_types=type_strs, top_k=top_k * _OVERSAMPLE,
+                )
+                bm25_map = {mid: sim for mid, sim in bm25_results}
+                # 补 BM25 找到但向量未召回的记忆
+                seen_ids = {r.id for r, _ in candidates}
+                missing_ids = [mid for mid in bm25_map if mid not in seen_ids]
+                if missing_ids:
+                    extra = await self._fetch_records_by_ids(user_id, missing_ids)
+                    # 给补充的记录假设 vector_sim=0.3 (FTS 命中但向量未召, 弱信号)
+                    candidates.extend([(r, 0.3) for r in extra])
+            except Exception as e:
+                logger.debug(f"BM25 召回失败 (降级仅向量): {e}")
+
             if not candidates:
                 return []
 
-            # 2. 查询实体 + 用户邻居 (供 graph_proximity 信号用)
+            # 2. 查询实体 + 用户邻居 (实体加权, 但权重已很低)
             query_entities = self._extract_query_entities(query)
             user_neighbors: set[str] = set()
             for ent in query_entities:
                 user_neighbors |= await self._kg.neighbors(user_id, ent, max_hops=2)
 
-            # 3. 算分 + 融合
+            # 3. 算分 + 融合 — 4 信号改为: 向量 + 时间 + BM25 + importance(含 effective_strength)
             now = datetime.now()
             scored: list[RecallResult] = []
             for record, raw_sim in candidates:
+                bm25_score = bm25_map.get(record.id, 0.0)
                 sig = RecallSignals(
                     vector_sim=compute_vector_sim(raw_sim),
                     temporal_decay=compute_temporal_decay(record.created_at, now=now),
-                    graph_proximity=compute_graph_proximity(
-                        record, query_entities, user_neighbors
-                    ),
+                    graph_proximity=bm25_score,  # 复用 slot, 含义改为 BM25
                     importance=compute_importance(record),
                 )
                 sig.final_score = fuse_signals(
@@ -144,10 +163,23 @@ class HybridRecallRouter:
         metrics.incr("recall.invocations")
         return top
 
+    async def _fetch_records_by_ids(
+        self, user_id: str, memory_ids: list[str]
+    ) -> list[MemoryRecord]:
+        """Phase 3: 从 SQLite 拉 BM25 命中但向量未召回的记录."""
+        from app.storage import get_metadata
+        meta = get_metadata()
+        out: list[MemoryRecord] = []
+        for mid in memory_ids:
+            rec = await meta.get_memory(mid)
+            if rec and rec.user_id == user_id:
+                out.append(rec)
+        return out
+
     @staticmethod
     def _extract_query_entities(query: str) -> set[str]:
         """从 query 中粗抽实体. MVP 用空格切分 + 去掉短词, 生产可换 NER."""
-        words = {w.strip("，。！？,.!?;:") for w in query.split()}
+        words = {w.strip("，。!?,.!?;:") for w in query.split()}
         return {w for w in words if len(w) >= 2}
 
 

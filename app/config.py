@@ -76,7 +76,7 @@ class Settings(BaseSettings):
     # ── 召回权重 (4 信号) ─────────────────────────────────────────────
     recall_w_vector: float = 0.40
     recall_w_temporal: float = 0.20
-    recall_w_graph: float = 0.20
+    recall_w_graph: float = 0.20  # Phase 3 起复用为 BM25 信号权重 (变量名保留兼容)
     recall_w_importance: float = 0.20
     temporal_tau_days: float = 30.0
 

@@ -73,6 +73,14 @@ class ChromaVectorStore:
             documents=[r.content for r in records],
             metadatas=[r.to_chroma_metadata() for r in records],
         )
+        # Phase 3: 同步写 FTS5 (BM25 召回通道)
+        try:
+            from app.storage.fts_store import get_fts_store
+            fts = get_fts_store()
+            for r in records:
+                fts.add(r.id, r.user_id, r.type.value, r.content)
+        except Exception as e:
+            logger.warning(f"FTS 同步写入失败 (不影响主流程): {e}")
         metrics.incr("chroma.writes", len(records))
 
     # ── Search ─────────────────────────────────────────────────────────
@@ -138,6 +146,12 @@ class ChromaVectorStore:
     async def delete(self, memory_id: str, user_id: str) -> bool:
         try:
             self._collection.delete(ids=[memory_id], where={"user_id": user_id})
+            # Phase 3: 同步删除 FTS
+            try:
+                from app.storage.fts_store import get_fts_store
+                get_fts_store().delete(memory_id)
+            except Exception:
+                pass
             metrics.incr("chroma.deletes")
             return True
         except Exception as e:
@@ -148,6 +162,12 @@ class ChromaVectorStore:
         count_before = self._collection.count()
         self._collection.delete(where={"user_id": user_id})
         deleted = count_before - self._collection.count()
+        # Phase 3: 同步删除 FTS
+        try:
+            from app.storage.fts_store import get_fts_store
+            get_fts_store().delete_by_user(user_id)
+        except Exception:
+            pass
         logger.info(f"GDPR delete: user={user_id}, deleted={deleted}")
         return deleted
 
