@@ -156,8 +156,13 @@ class MemoryOrchestrator:
         types: list[MemoryType] | None = None,
         top_k: int | None = None,
         session_id: str | None = None,
+        score_threshold: float | None = None,
     ) -> SearchResponse:
-        """统一召回入口. 返回 RecallResult 列表 + 性能数据."""
+        """统一召回入口. 返回 RecallResult 列表 + 性能数据.
+
+        Args:
+            score_threshold: final_score 阈值, None 用默认, 0.0 关闭过滤.
+        """
         start = time.perf_counter()
 
         results: list[RecallResult] = await recall_router.search(
@@ -165,6 +170,7 @@ class MemoryOrchestrator:
             query=query,
             memory_types=types,
             top_k=top_k,
+            score_threshold=score_threshold,
         )
 
         # 如果 session_id 给了, 把 Working Memory 最近几条作为最高优先级前置

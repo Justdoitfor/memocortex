@@ -34,6 +34,13 @@ from app.utils.metrics import metrics
 # 召回候选数 = top_k × OVERSAMPLE, 大网捞了再重排, 提高最终质量
 _OVERSAMPLE = 3
 
+# 召回质量阈值 — 基于纯 vector_sim (非 final_score, 因后者被 temporal/importance 稀释)
+# bge-small-zh 中文嵌入基线相似度普遍偏高 (0.55+), 0.65 是个经验拐点:
+#   - vector_sim >= 0.65 → 大概率真相关
+#   - vector_sim <  0.65 → "找不到强相关, 但硬要的话最像的是这条"
+# 业务方可在 search() 显式传 score_threshold=0.0 关闭过滤拿到全部候选 (调试用).
+_DEFAULT_VECTOR_THRESHOLD = 0.65
+
 
 class HybridRecallRouter:
     """统一召回入口 — 业务方应只调用 search(), 不要直接访问 VectorStore."""
@@ -54,9 +61,16 @@ class HybridRecallRouter:
         memory_types: list[MemoryType] | None = None,
         top_k: int | None = None,
         weights: tuple[float, float, float, float] | None = None,
+        score_threshold: float | None = None,
     ) -> list[RecallResult]:
-        """主入口."""
+        """主入口.
+
+        Args:
+            score_threshold: final_score 低于此值的结果被过滤. None 用 config 默认,
+                显式传 0.0 可拿到所有候选 (调试用).
+        """
         top_k = top_k or config.default_top_k
+        threshold = score_threshold if score_threshold is not None else _DEFAULT_VECTOR_THRESHOLD
         type_strs = [t.value for t in memory_types] if memory_types else None
 
         with metrics.timer("recall.total.latency"):
@@ -98,7 +112,16 @@ class HybridRecallRouter:
                 )
                 scored.append(RecallResult(record=record, signals=sig))
 
-            # 4. 重排 + 截断
+            # 4. 阈值过滤 (基于 vector_sim) + 重排 + 截断
+            #    用 vector_sim 而非 final_score 做阈值, 避免 importance/temporal 加权
+            #    把"语义相似度=0.5 但 importance=1.0"的不相关高分项误留.
+            if threshold > 0:
+                before = len(scored)
+                scored = [r for r in scored if r.signals.vector_sim >= threshold]
+                if not scored and before > 0:
+                    logger.debug(
+                        f"召回全部 {before} 条 vector_sim 均低于 {threshold:.2f}, 返回空"
+                    )
             scored.sort(key=lambda r: r.signals.final_score, reverse=True)
             top = scored[:top_k]
             for i, r in enumerate(top, 1):

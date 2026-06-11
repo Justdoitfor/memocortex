@@ -38,6 +38,7 @@ async def search_memories(req: SearchRequest) -> SearchResponse:
             types=req.types,
             top_k=req.top_k,
             session_id=req.session_id,
+            score_threshold=req.score_threshold,
         )
     except Exception as e:
         raise HTTPException(

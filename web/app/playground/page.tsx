@@ -313,8 +313,13 @@ export default function PlaygroundPage() {
             )}
 
             {searchResp?.results.length === 0 && (
-              <div className="rounded border border-dashed border-zinc-300 p-4 text-center text-xs text-zinc-400 dark:border-zinc-700">
-                没找到相关记忆 — 试试先在左侧写一条
+              <div className="rounded border border-dashed border-zinc-300 p-4 text-center text-xs text-zinc-500 dark:border-zinc-700">
+                <div className="font-medium text-zinc-600 dark:text-zinc-300">未召回到相关记忆</div>
+                <div className="mt-1">
+                  此 user_id 下没有 final_score ≥ 0.55 的记忆
+                  <br />
+                  (左侧先写, 或换个相关 query 重试)
+                </div>
               </div>
             )}
 

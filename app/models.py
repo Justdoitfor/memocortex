@@ -179,6 +179,7 @@ class SearchRequest(BaseModel):
     types: list[MemoryType] | None = None  # None = 全类型
     top_k: int = 8
     session_id: str | None = None
+    score_threshold: float | None = None  # None=默认 0.55, 0.0=不过滤 (调试用)
 
 
 class SearchResponse(BaseModel):
